@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>其他头尾程费用导入 - Kuston 供速通</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; font-size: 13px; background: #f0f2f5; color: #333; display: flex; height: 100vh; overflow: hidden; }
+
+  /* ─── SIDEBAR ─────────────────────────────────────────────────── */
+  .sidebar { width: 120px; background: #1a2340; display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; overflow-y: auto; }
+  .sidebar-logo { padding: 14px 10px; border-bottom: 1px solid #2a3560; text-align: center; }
+  .sidebar-logo img { width: 90px; }
+  .sidebar-logo-text { color: #fff; font-size: 13px; font-weight: bold; margin-top: 4px; letter-spacing: 1px; }
+  .sidebar-menu { flex: 1; }
+  .menu-item { display: flex; flex-direction: column; align-items: center; padding: 12px 6px; cursor: pointer; color: #8a9cc8; font-size: 11px; gap: 4px; transition: background 0.2s, color 0.2s; border-left: 3px solid transparent; }
+  .menu-item:hover { background: #243055; color: #fff; }
+  .menu-item.active { background: #1e3a6e; color: #4da3ff; border-left-color: #4da3ff; }
+  .menu-item .m-icon { font-size: 17px; }
+  .menu-group { padding: 8px 10px 4px; color: #4a5a80; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+  .sub-menu-item { padding: 9px 10px 9px 18px; cursor: pointer; color: #8a9cc8; font-size: 12px; transition: background 0.15s, color 0.15s; border-left: 3px solid transparent; }
+  .sub-menu-item:hover { background: #243055; color: #fff; }
+  .sub-menu-item.active { background: #1e3a6e; color: #4da3ff; border-left-color: #4da3ff; font-weight: bold; }
+
+  /* ─── MAIN AREA ───────────────────────────────────────────────── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ─── TOP NAV ─────────────────────────────────────────────────── */
+  .topnav { height: 44px; background: #1a2340; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; flex-shrink: 0; border-bottom: 1px solid #2a3560; }
+  .topnav-left { display: flex; align-items: center; gap: 8px; }
+  .topnav-menu-btn { color: #8a9cc8; font-size: 18px; cursor: pointer; padding: 4px; }
+  .breadcrumb { color: #8a9cc8; font-size: 12px; display: flex; align-items: center; gap: 4px; }
+  .breadcrumb span { color: #cdd; }
+  .breadcrumb .sep { color: #4a5a80; }
+  .breadcrumb .current { color: #c0cfff; }
+  .topnav-right { display: flex; align-items: center; gap: 14px; color: #8a9cc8; font-size: 12px; }
+  .topnav-right .user { color: #c0cfff; cursor: pointer; }
+  .topnav-right .divider { width: 1px; height: 14px; background: #3a4a70; }
+  .topnav-right a { color: #8a9cc8; text-decoration: none; cursor: pointer; }
+  .topnav-right a:hover { color: #fff; }
+
+  /* ─── CONTENT WRAPPER ─────────────────────────────────────────── */
+  .content-wrap { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+  /* ─── TAB BAR ─────────────────────────────────────────────────── */
+  .tab-bar { background: #fff; border-bottom: 1px solid #e4e8f0; padding: 0 16px; display: flex; align-items: center; gap: 0; flex-shrink: 0; }
+  .tab-item { padding: 10px 16px 8px; font-size: 13px; color: #666; cursor: pointer; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; transition: color 0.2s; white-space: nowrap; }
+  .tab-item:hover { color: #1677ff; }
+  .tab-item.active { color: #1677ff; border-bottom-color: #1677ff; font-weight: 500; }
+  .tab-item .tab-close { color: #999; font-size: 11px; padding: 1px 3px; border-radius: 3px; }
+  .tab-item .tab-close:hover { background: #f0f0f0; color: #333; }
+
+  /* ─── PAGE BODY ───────────────────────────────────────────────── */
+  .page-body { padding: 14px 16px; flex: 1; }
+
+  /* ─── SEARCH BAR ──────────────────────────────────────────────── */
+  .search-bar { background: #fff; border-radius: 4px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .search-item { display: flex; align-items: center; gap: 6px; }
+  .search-item label { color: #666; white-space: nowrap; font-size: 12px; }
+  .s-input { height: 30px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 0 10px; font-size: 12px; color: #333; outline: none; width: 150px; transition: border-color 0.2s; }
+  .s-input:focus { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,0.1); }
+  .s-select { height: 30px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 0 24px 0 10px; font-size: 12px; color: #333; outline: none; appearance: none; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E") right 8px center no-repeat; cursor: pointer; min-width: 120px; transition: border-color 0.2s; }
+  .s-select:focus { border-color: #1677ff; }
+  .search-btns { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .btn { height: 30px; padding: 0 16px; border-radius: 4px; font-size: 12px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .btn-primary { background: #1677ff; color: #fff; border-color: #1677ff; }
+  .btn-primary:hover { background: #4096ff; border-color: #4096ff; }
+  .btn-default { background: #fff; color: #333; border-color: #d9d9d9; }
+  .btn-default:hover { border-color: #1677ff; color: #1677ff; }
+  .btn-success { background: #52c41a; color: #fff; border-color: #52c41a; }
+  .btn-success:hover { background: #73d13d; }
+  .btn-danger { background: #ff4d4f; color: #fff; border-color: #ff4d4f; }
+  .btn-danger:hover { background: #ff7875; }
+  .btn-warning { background: #fa8c16; color: #fff; border-color: #fa8c16; }
+  .btn-warning:hover { background: #ffa940; }
+  .btn-sm { height: 24px; padding: 0 10px; font-size: 12px; }
+  .btn-link { background: none; border: none; color: #1677ff; padding: 0 4px; cursor: pointer; font-size: 12px; }
+  .btn-link:hover { color: #4096ff; }
+  .btn-link.danger { color: #ff4d4f; }
+  .btn-link.danger:hover { color: #ff7875; }
+
+  /* ─── TABLE ───────────────────────────────────────────────────── */
+  .table-wrap { background: #fff; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: #f5f7fa; color: #666; font-weight: 500; padding: 10px 12px; text-align: left; border-bottom: 1px solid #e8ecf2; white-space: nowrap; font-size: 12px; }
+  tbody tr { border-bottom: 1px solid #f0f2f8; transition: background 0.15s; }
+  tbody tr:hover { background: #f8faff; }
+  tbody td { padding: 9px 12px; color: #333; font-size: 12px; vertical-align: middle; }
+  .td-ops { display: flex; align-items: center; gap: 2px; flex-wrap: nowrap; }
+
+  /* ─── TAGS ────────────────────────────────────────────────────── */
+  .tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 3px; font-size: 11px; white-space: nowrap; font-weight: 500; }
+  .tag-estimate { background: #e6f7ff; color: #1677ff; border: 1px solid #91caff; }
+  .tag-bill { background: #fff2e8; color: #d46b08; border: 1px solid #ffd591; }
+  .tag-status-pending { background: #fffbe6; color: #d46b08; border: 1px solid #ffe58f; }
+  .tag-status-done { background: #f6ffed; color: #389e0d; border: 1px solid #b7eb8f; }
+  .tag-status-rejected { background: #fff1f0; color: #cf1322; border: 1px solid #ffa39e; }
+  .tag-head { background: #f9f0ff; color: #722ed1; border: 1px solid #d3adf7; }
+  .tag-tail { background: #e6fffb; color: #08979c; border: 1px solid #87e8de; }
+
+  /* ─── PAGINATION ──────────────────────────────────────────────── */
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 1px solid #f0f2f8; background: #fff; font-size: 12px; color: #666; }
+  .page-info { }
+  .page-btns { display: flex; align-items: center; gap: 4px; }
+  .page-btn { height: 28px; min-width: 28px; padding: 0 6px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; font-size: 12px; color: #333; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .page-btn:hover { border-color: #1677ff; color: #1677ff; }
+  .page-btn.active { background: #1677ff; border-color: #1677ff; color: #fff; }
+  .page-btn:disabled { color: #d9d9d9; cursor: not-allowed; }
+  .page-right { display: flex; align-items: center; gap: 8px; }
+  .page-jump { display: flex; align-items: center; gap: 4px; }
+  .page-jump input { width: 46px; height: 28px; border: 1px solid #d9d9d9; border-radius: 4px; text-align: center; font-size: 12px; outline: none; }
+
+  /* ─── MODAL OVERLAY ───────────────────────────────────────────── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal { background: #fff; border-radius: 6px; box-shadow: 0 8px 32px rgba(0,0,0,0.22); display: flex; flex-direction: column; transform: scale(0.95); transition: transform 0.2s; }
+  .modal-overlay.show .modal { transform: scale(1); }
+  .modal-header { padding: 14px 20px 12px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .modal-header h3 { font-size: 15px; font-weight: 600; color: #1a1a2e; }
+  .modal-close { background: none; border: none; font-size: 18px; color: #999; cursor: pointer; padding: 2px 6px; border-radius: 4px; line-height: 1; }
+  .modal-close:hover { background: #f5f5f5; color: #333; }
+  .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+  .modal-footer { padding: 12px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
+
+  /* ─── FORM ────────────────────────────────────────────────────── */
+  .form-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 16px; }
+  .form-label { min-width: 110px; text-align: right; padding-top: 7px; color: #555; font-size: 13px; flex-shrink: 0; }
+  .form-label.required::before { content: "* "; color: #ff4d4f; }
+  .form-control { flex: 1; }
+  .f-input { height: 32px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 0 11px; font-size: 13px; width: 100%; outline: none; transition: border-color 0.2s; }
+  .f-input:focus { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,0.1); }
+  .f-select { height: 32px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 0 28px 0 11px; font-size: 13px; width: 100%; outline: none; appearance: none; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E") right 10px center no-repeat; cursor: pointer; transition: border-color 0.2s; }
+  .f-select:focus { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,0.1); }
+
+  /* ─── UPLOAD ZONE ─────────────────────────────────────────────── */
+  .upload-zone { border: 1.5px dashed #d9d9d9; border-radius: 6px; padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: #fafafa; }
+  .upload-zone:hover, .upload-zone.dragover { border-color: #1677ff; background: #f0f7ff; }
+  .upload-zone .upload-icon { font-size: 28px; color: #bbb; margin-bottom: 8px; }
+  .upload-zone p { color: #666; font-size: 13px; margin-bottom: 4px; }
+  .upload-zone p span { color: #1677ff; font-weight: 500; }
+  .upload-zone small { color: #999; font-size: 11px; }
+  .upload-zone input[type="file"] { display: none; }
+  .file-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .file-item { display: flex; align-items: center; justify-content: space-between; background: #f6f8ff; border: 1px solid #d0e0ff; border-radius: 4px; padding: 7px 12px; }
+  .file-item-name { display: flex; align-items: center; gap: 6px; color: #1677ff; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 360px; }
+  .file-item-name .file-icon { color: #ff4d4f; flex-shrink: 0; }
+  .file-item-remove { color: #999; cursor: pointer; font-size: 15px; padding: 0 3px; flex-shrink: 0; }
+  .file-item-remove:hover { color: #ff4d4f; }
+
+  /* ─── ALERT BOX ───────────────────────────────────────────────── */
+  .alert { border-radius: 4px; padding: 10px 14px; font-size: 12px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 8px; }
+  .alert-info { background: #e6f4ff; border: 1px solid #91caff; color: #0958d9; }
+  .alert-warning { background: #fffbe6; border: 1px solid #ffe58f; color: #d46b08; }
+  .alert-success { background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; }
+  .alert-error { background: #fff1f0; border: 1px solid #ffa39e; color: #cf1322; }
+
+  /* ─── DIVIDER ─────────────────────────────────────────────────── */
+  .divider { height: 1px; background: #f0f2f8; margin: 16px 0; }
+  .section-title { font-size: 13px; font-weight: 600; color: #1a1a2e; margin-bottom: 12px; padding-left: 8px; border-left: 3px solid #1677ff; }
+
+  /* ─── AUDIT MODAL SPECIFIC ────────────────────────────────────── */
+  .audit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .audit-panel { background: #f8faff; border: 1px solid #e4e8f5; border-radius: 6px; padding: 16px; }
+  .audit-panel-title { font-size: 13px; font-weight: 600; color: #1a2340; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .audit-panel-title .dot { width: 8px; height: 8px; border-radius: 50%; background: #1677ff; }
+  .detail-row { display: flex; align-items: flex-start; margin-bottom: 10px; font-size: 12px; }
+  .detail-label { min-width: 90px; color: #888; flex-shrink: 0; }
+  .detail-value { color: #222; font-weight: 500; flex: 1; }
+  .amount-big { font-size: 20px; color: #e6312d; font-weight: 700; }
+  .pdf-preview-area { border: 1px solid #dde3f0; border-radius: 6px; overflow: hidden; background: #595959; min-height: 320px; display: flex; flex-direction: column; }
+  .pdf-toolbar { background: #3a3a3a; padding: 6px 12px; display: flex; align-items: center; justify-content: space-between; }
+  .pdf-toolbar span { color: #ccc; font-size: 11px; }
+  .pdf-toolbar button { background: #555; border: none; color: #ddd; padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; }
+  .pdf-doc { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .pdf-page { background: #fff; width: 100%; padding: 28px 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.4); border-radius: 2px; }
+  .pdf-logo { text-align: center; font-size: 16px; font-weight: bold; color: #1a2340; margin-bottom: 6px; }
+  .pdf-subtitle { text-align: center; color: #888; font-size: 11px; margin-bottom: 14px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+  .pdf-meta { display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 11px; color: #555; }
+  .pdf-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .pdf-table th { background: #1a2340; color: #fff; padding: 6px 8px; text-align: left; }
+  .pdf-table td { border-bottom: 1px solid #eee; padding: 6px 8px; }
+  .pdf-total { text-align: right; margin-top: 12px; font-size: 13px; }
+  .pdf-total strong { color: #d46b08; }
+  .pdf-stamp { text-align: right; margin-top: 16px; }
+  .stamp { display: inline-block; border: 2px solid #e63946; color: #e63946; border-radius: 50%; width: 64px; height: 64px; line-height: 1.1; text-align: center; font-size: 9px; padding-top: 10px; transform: rotate(-20deg); opacity: 0.8; }
+  .files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 8px; }
+  .file-preview-card { border: 1px solid #dde3f0; border-radius: 6px; overflow: hidden; cursor: pointer; transition: box-shadow 0.2s; }
+  .file-preview-card:hover { box-shadow: 0 3px 12px rgba(22,119,255,0.18); border-color: #91caff; }
+  .file-preview-card.active { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,0.2); }
+  .fpc-header { background: #1a2340; padding: 8px 12px; display: flex; align-items: center; gap: 6px; }
+  .fpc-header span { color: #afc4ff; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fpc-body { padding: 12px; background: #f5f7ff; min-height: 60px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; }
+  .notice-bar { background: #fffbe6; border: 1px solid #ffe58f; border-radius: 4px; padding: 8px 14px; font-size: 12px; color: #8a5c00; display: flex; align-items: center; gap: 6px; margin-bottom: 14px; }
+
+  /* ─── CONFIRM MODAL ───────────────────────────────────────────── */
+  .confirm-icon { text-align: center; margin-bottom: 12px; }
+  .confirm-icon .icon-circle { width: 52px; height: 52px; border-radius: 50%; background: #e6f4ff; border: 2px solid #91caff; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; color: #1677ff; }
+  .confirm-text { text-align: center; font-size: 15px; color: #333; font-weight: 500; }
+
+  /* ─── TOAST ───────────────────────────────────────────────────── */
+  #toast-container { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+  .toast { background: rgba(0,0,0,0.8); color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 13px; display: flex; align-items: center; gap: 8px; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.2s forwards; min-width: 200px; justify-content: center; }
+  .toast.success { background: rgba(82,196,26,0.92); }
+  .toast.error { background: rgba(255,77,79,0.92); }
+  .toast.warning { background: rgba(250,140,22,0.92); }
+  @keyframes toastIn { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+
+  /* ─── STEP INDICATOR ──────────────────────────────────────────── */
+  .steps { display: flex; align-items: center; margin-bottom: 20px; }
+  .step { display: flex; align-items: center; flex: 1; }
+  .step:last-child { flex: none; }
+  .step-node { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+  .step-node.done { background: #1677ff; color: #fff; }
+  .step-node.active { background: #1677ff; color: #fff; box-shadow: 0 0 0 3px rgba(22,119,255,0.2); }
+  .step-node.todo { background: #e8eaf0; color: #999; }
+  .step-label { font-size: 11px; margin-top: 4px; color: #666; }
+  .step-label.active-lbl { color: #1677ff; font-weight: 600; }
+  .step-wrap { display: flex; flex-direction: column; align-items: center; }
+  .step-line { flex: 1; height: 2px; background: #e8eaf0; margin: 0 6px; margin-bottom: 14px; }
+  .step-line.done { background: #1677ff; }
+
+  /* ─── SCROLL ──────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #c1c9d9; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #a0a9bc; }
+
+  .chip { display: inline-block; background: #f0f3fa; border: 1px solid #dde3f0; color: #666; border-radius: 12px; padding: 2px 10px; font-size: 11px; }
+  .attachment-badge { display: inline-flex; align-items: center; gap: 4px; background: #fff7e6; border: 1px solid #ffd591; color: #d46b08; border-radius: 3px; padding: 2px 8px; font-size: 11px; cursor: pointer; }
+  .attachment-badge:hover { background: #ffe7ba; }
+</style>
+</head>
+<body>
+
+<!-- ─── SIDEBAR ─────────────────────────────────────────────────────────── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div style="background:#1677ff;color:#fff;border-radius:6px;font-size:18px;font-weight:900;padding:6px 10px;display:inline-block;letter-spacing:2px;">KS</div>
+    <div class="sidebar-logo-text">供速通</div>
+  </div>
+  <div class="sidebar-menu">
+    <div class="menu-item"><span class="m-icon">&#9776;</span><span>首页</span></div>
+    <div class="menu-item"><span class="m-icon">&#9741;</span><span>基础资料</span></div>
+    <div class="menu-item"><span class="m-icon">&#9735;</span><span>采购中心</span></div>
+    <div class="menu-item"><span class="m-icon">&#9744;</span><span>库存中心</span></div>
+    <div class="menu-item"><span class="m-icon">&#9678;</span><span>创意中心</span></div>
+    <div class="menu-item active"><span class="m-icon">&#9670;</span><span>财务中心</span></div>
+    <div class="sub-menu-item">1C数据管理</div>
+    <div class="sub-menu-item">资金收款认领</div>
+    <div class="sub-menu-item">出行管理</div>
+    <div class="sub-menu-item">保证金管理</div>
+    <div class="sub-menu-item">采购管理</div>
+    <div class="sub-menu-item">客户信息管理</div>
+    <div style="padding:6px 10px 4px;color:#4a5a80;font-size:10px;font-weight:600;letter-spacing:1px;">头尾程费用</div>
+    <div class="sub-menu-item active">其他头尾程...</div>
+    <div class="sub-menu-item">费用分摊</div>
+    <div class="menu-item"><span class="m-icon">&#9737;</span><span>供应链金融</span></div>
+  </div>
+</nav>
+
+<!-- ─── MAIN ──────────────────────────────────────────────────────────────── -->
+<div class="main">
+  <!-- TOP NAV -->
+  <div class="topnav">
+    <div class="topnav-left">
+      <span class="topnav-menu-btn">&#9776;</span>
+      <div class="breadcrumb">
+        <span>平台管理</span><span class="sep">/</span>
+        <span>财务中心</span><span class="sep">/</span>
+        <span>头尾程费用</span><span class="sep">/</span>
+        <span class="current">其他头尾程费用导入</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <span>欢迎使用供速通业务平台！</span>
+      <span class="divider"></span>
+      <a>中文</a>
+      <span class="divider"></span>
+      <a>帮助</a>
+      <span class="divider"></span>
+      <a>系统产品端</a>
+      <span class="divider"></span>
+      <span class="user">彭*彭家辉</span>
+    </div>
+  </div>
+
+  <div class="content-wrap">
+    <!-- TAB BAR -->
+    <div class="tab-bar">
+      <div class="tab-item">首页</div>
+      <div class="tab-item active">其他头尾程费用导入 <span class="tab-close">&#10005;</span></div>
+    </div>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      <!-- SEARCH BAR -->
+      <div class="search-bar">
+        <div class="search-item">
+          <label>费用单号</label>
+          <input class="s-input" type="text" placeholder="请输入单据编号" id="filterBillNo" />
+        </div>
+        <div class="search-item">
+          <label>出入库单号</label>
+          <input class="s-input" type="text" placeholder="出入库单号" id="filterStockNo" />
+        </div>
+        <div class="search-item">
+          <label>供应商</label>
+          <input class="s-input" type="text" placeholder="供应商名称" id="filterSupplier" />
+        </div>
+        <div class="search-item">
+          <label>费用类型</label>
+          <select class="s-select" id="filterFeeType" style="min-width:110px;">
+            <option value="">全部</option>
+            <option value="estimate">暂估</option>
+            <option value="bill">账单</option>
+          </select>
+        </div>
+        <div class="search-item">
+          <label>审核状态</label>
+          <select class="s-select" id="filterStatus">
+            <option value="">全部状态</option>
+            <option value="pending">待审核</option>
+            <option value="done">已审核</option>
+            <option value="rejected">已驳回</option>
+          </select>
+        </div>
+        <div class="search-btns">
+          <button class="btn btn-primary" onclick="doSearch()">查询</button>
+          <button class="btn btn-default" onclick="doReset()">重置</button>
+          <button class="btn btn-primary" onclick="openImportModal()">导入</button>
+        </div>
+      </div>
+
+      <!-- TABLE -->
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>费用类型</th>
+              <th>头尾程类型</th>
+              <th>费用单号</th>
+              <th>出入库单号</th>
+              <th>店铺编码</th>
+              <th>店铺名称</th>
+              <th>供应商编码</th>
+              <th>供应商名称</th>
+              <th>原始账单</th>
+              <th>状态</th>
+              <th>操作</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+        <div class="pagination">
+          <span class="page-info">共 <strong id="totalCount">9</strong> 条 &nbsp; 10条/页</span>
+          <div class="page-btns" id="pageBtns"></div>
+          <div class="page-right">
+            <div class="page-jump">跳至 <input type="number" value="1" min="1" id="jumpInput" /> 页</div>
+            <button class="btn btn-default btn-sm" onclick="doJump()">确认</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TOAST ────────────────────────────────────────────────────────────── -->
+<div id="toast-container"></div>
+
+<!-- ─── IMPORT MODAL ─────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal" style="width:580px;max-height:88vh;">
+    <div class="modal-header">
+      <h3>导入头尾程费用</h3>
+      <button class="modal-close" onclick="closeModal('importModal')">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <!-- STEPS -->
+      <div class="steps">
+        <div class="step-wrap"><div class="step-node done">1</div><div class="step-label active-lbl">选择类型</div></div>
+        <div class="step-line done"></div>
+        <div class="step-wrap"><div class="step-node active" id="step2Node">2</div><div class="step-label active-lbl" id="step2Lbl">上传数据</div></div>
+        <div class="step-line" id="step2Line"></div>
+        <div class="step-wrap"><div class="step-node todo" id="step3Node">3</div><div class="step-label" id="step3Lbl">完成</div></div>
+      </div>
+
+      <!-- STEP 1: TYPE -->
+      <div class="section-title">第一步：选择费用类型</div>
+      <div style="display:flex;gap:16px;margin-bottom:20px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 18px;border:2px solid #d9d9d9;border-radius:6px;flex:1;transition:all 0.2s;" id="lbl-estimate" onclick="selectImportType('estimate')">
+          <input type="radio" name="importType" value="estimate" checked style="accent-color:#1677ff;" />
+          <span>
+            <strong style="display:block;font-size:13px;color:#1a1a2e;">暂估费用</strong>
+            <small style="color:#999;">按标准模板导入预估费用，无需原始凭证</small>
+          </span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 18px;border:2px solid #d9d9d9;border-radius:6px;flex:1;transition:all 0.2s;" id="lbl-bill" onclick="selectImportType('bill')">
+          <input type="radio" name="importType" value="bill" style="accent-color:#1677ff;" />
+          <span>
+            <strong style="display:block;font-size:13px;color:#1a1a2e;">实际账单</strong>
+            <small style="color:#999;">导入物流商实际对账单，需附原始账单凭证</small>
+          </span>
+        </label>
+      </div>
+
+      <!-- TEMPLATE DOWNLOAD -->
+      <div class="section-title">第二步：下载并填写模板</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#f8faff;border:1px solid #d0e0ff;border-radius:6px;padding:12px 16px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:22px;color:#1677ff;">&#128196;</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:#1a1a2e;" id="templateName">暂估费用导入模板.xlsx</div>
+            <div style="font-size:11px;color:#999;">请按模板格式填写数据，确保字段完整</div>
+          </div>
+        </div>
+        <button class="btn btn-default btn-sm" onclick="showToast('模板下载成功','success')">&#8595; 下载模板</button>
+      </div>
+
+      <!-- DATA UPLOAD -->
+      <div class="section-title">第三步：上传费用数据文件</div>
+      <div class="upload-zone" id="excelZone" onclick="document.getElementById('excelFile').click()" ondragover="handleDragOver(event,'excelZone')" ondragleave="handleDragLeave('excelZone')" ondrop="handleDrop(event,'excelFile','excelFileList')">
+        <div class="upload-icon">&#128190;</div>
+        <p>将 Excel 文件拖到此处，或 <span>点击上传</span></p>
+        <small>支持 .xlsx / .xls 格式，单次最多 500 条数据</small>
+        <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="handleFileInput(this,'excelFileList')" />
+      </div>
+      <div class="file-list" id="excelFileList"></div>
+
+      <!-- BILL ATTACHMENT (dynamic) -->
+      <div id="billAttachSection" style="display:none;margin-top:18px;">
+        <div class="divider"></div>
+        <div class="notice-bar">
+          <span style="font-size:15px;">&#9888;</span>
+          <span>账单导入强制要求：必须上传物流商原始对账单，供财务审核时与系统数据对比核查</span>
+        </div>
+        <div class="section-title" style="color:#d46b08;border-left-color:#d46b08;">第四步：上传原始账单附件（必填）</div>
+        <div class="upload-zone" id="billZone" onclick="document.getElementById('billFiles').click()" ondragover="handleDragOver(event,'billZone')" ondragleave="handleDragLeave('billZone')" ondrop="handleDrop(event,'billFiles','billFileList')">
+          <div class="upload-icon" style="color:#d46b08;">&#128196;</div>
+          <p>将账单文件拖到此处，或 <span>点击上传</span></p>
+          <small>支持 PDF / JPG / PNG，可上传多个文件，单个不超过 20MB</small>
+          <input type="file" id="billFiles" accept=".pdf,.jpg,.jpeg,.png" multiple onchange="handleFileInput(this,'billFileList')" />
+        </div>
+        <div class="file-list" id="billFileList"></div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('importModal')">取消</button>
+      <button class="btn btn-primary" onclick="submitImport()">确认导入</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── AUDIT MODAL ───────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="auditModal">
+  <div class="modal" style="width:900px;max-height:90vh;">
+    <div class="modal-header">
+      <h3 id="auditModalTitle">审核费用单据</h3>
+      <button class="modal-close" onclick="closeModal('auditModal')">&#10005;</button>
+    </div>
+    <div class="modal-body" id="auditModalBody"></div>
+    <div class="modal-footer" id="auditModalFooter"></div>
+  </div>
+</div>
+
+<!-- ─── CONFIRM MODAL ─────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="width:360px;">
+    <div class="modal-body" style="padding:28px 24px 20px;">
+      <div class="confirm-icon"><div class="icon-circle">&#10068;</div></div>
+      <div class="confirm-text" id="confirmText">确定要审核吗？</div>
+      <div style="text-align:center;color:#999;font-size:12px;margin-top:8px;" id="confirmSubText"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('confirmModal')">关闭</button>
+      <button class="btn btn-primary" id="confirmOkBtn" onclick="">确定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─── DATA ──────────────────────────────────────────────────────────────── */
+const rawData = [
+  { id:1, feeType:'estimate', headTail:'头程', billNo:'TC-202604070002', stockNo:'ASN202604070005', shopCode:'', shopName:'', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'done',    attachments:[] },
+  { id:2, feeType:'estimate', headTail:'头程', billNo:'TC-202604070001', stockNo:'ASN202604070004', shopCode:'', shopName:'', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'done',    attachments:[] },
+  { id:3, feeType:'bill',     headTail:'头程', billNo:'TC-202604010008', stockNo:'ASN202604010014', shopCode:'', shopName:'', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'pending',  attachments:['顺丰4月对账单_已盖章.pdf','FBA签收确认单.jpg'] },
+  { id:4, feeType:'estimate', headTail:'头程', billNo:'TC-202604010008', stockNo:'ASN202604010013', shopCode:'', shopName:'', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'done',    attachments:[] },
+  { id:5, feeType:'bill',     headTail:'尾程', billNo:'TC-202604010007', stockNo:'SQ202604010465', shopCode:'', shopName:'', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'pending',  attachments:['递四方3月账单.pdf'] },
+  { id:6, feeType:'estimate', headTail:'头程', billNo:'TC-202604010006', stockNo:'ASN202604010008', shopCode:'', shopName:'', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'pending',  attachments:[] },
+  { id:7, feeType:'bill',     headTail:'头程', billNo:'TC-202604010005', stockNo:'ASN202604010007', shopCode:'', shopName:'', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'rejected', attachments:['联宇物流账单_v2.pdf','报关费凭证.png','运费发票扫描件.pdf'] },
+  { id:8, feeType:'estimate', headTail:'尾程', billNo:'TC-202604010004', stockNo:'SQ202604010328', shopCode:'', shopName:'', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'pending',  attachments:[] },
+  { id:9, feeType:'estimate', headTail:'头程', billNo:'TC-202604010003', stockNo:'ASN202604010008', shopCode:'', shopName:'', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'done',    attachments:[] },
+  { id:10,feeType:'estimate', headTail:'头程', billNo:'TC-202604010002', stockNo:'ASN202604010007', shopCode:'', shopName:'', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'done',    attachments:[] },
+];
+
+let filteredData = [...rawData];
+let currentPage = 1;
+const pageSize = 10;
+let currentImportType = 'estimate';
+const importedExcelFiles = [];
+const importedBillFiles = [];
+
+/* ─── RENDER TABLE ──────────────────────────────────────────────────────── */
+function renderTable() {
+  const start = (currentPage - 1) * pageSize;
+  const pageData = filteredData.slice(start, start + pageSize);
+  const tbody = document.getElementById('tableBody');
+  document.getElementById('totalCount').textContent = filteredData.length;
+
+  tbody.innerHTML = pageData.map(r => {
+    const feeTag = r.feeType === 'estimate'
+      ? '<span class="tag tag-estimate">暂估</span>'
+      : '<span class="tag tag-bill">账单</span>';
+    const htTag = r.headTail === '头程'
+      ? '<span class="tag tag-head">头程</span>'
+      : '<span class="tag tag-tail">尾程</span>';
+    const statusTag = r.status === 'done'
+      ? '<span class="tag tag-status-done">已审核</span>'
+      : r.status === 'pending'
+      ? '<span class="tag tag-status-pending">待审核</span>'
+      : '<span class="tag tag-status-rejected">已驳回</span>';
+
+    const attachCell = (r.feeType === 'bill' && r.attachments.length > 0)
+      ? `<span class="attachment-badge" onclick="previewAttachments(${r.id})">&#128206; ${r.attachments.length}个附件</span>`
+      : '<span style="color:#ccc;font-size:11px;">-</span>';
+
+    let ops = `<div class="td-ops">
+      <button class="btn-link" onclick="viewDetail(${r.id})">详情</button>`;
+    if (r.status === 'pending') {
+      ops += `<button class="btn-link" onclick="openAudit(${r.id})">审核</button>`;
+    }
+    if (r.status !== 'done') {
+      ops += `<button class="btn-link" onclick="editRow(${r.id})">编辑</button>`;
+    }
+    ops += `<button class="btn-link" onclick="viewLog(${r.id})">日志</button></div>`;
+
+    return `<tr>
+      <td>${feeTag}</td>
+      <td>${htTag}</td>
+      <td style="font-family:monospace;font-size:11px;color:#555;">${r.billNo}</td>
+      <td style="font-family:monospace;font-size:11px;color:#555;">${r.stockNo}</td>
+      <td>${r.shopCode}</td>
+      <td>${r.shopName}</td>
+      <td>${r.supplierCode}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.supplierName}">${r.supplierName}</td>
+      <td>${attachCell}</td>
+      <td>${statusTag}</td>
+      <td>${ops}</td>
+    </tr>`;
+  }).join('');
+
+  renderPagination();
+}
+
+function renderPagination() {
+  const total = filteredData.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const container = document.getElementById('pageBtns');
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>&#8249;</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 1) {
+      html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    } else if (Math.abs(i - currentPage) === 2) {
+      html += `<span style="padding:0 4px;color:#999;">...</span>`;
+    }
+  }
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>&#8250;</button>`;
+  container.innerHTML = html;
+}
+
+function goPage(n) {
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  if (n < 1 || n > totalPages) return;
+  currentPage = n;
+  renderTable();
+}
+function doJump() {
+  const v = parseInt(document.getElementById('jumpInput').value);
+  if (!isNaN(v)) goPage(v);
+}
+
+/* ─── SEARCH ────────────────────────────────────────────────────────────── */
+function doSearch() {
+  const bn = document.getElementById('filterBillNo').value.trim().toLowerCase();
+  const sn = document.getElementById('filterStockNo').value.trim().toLowerCase();
+  const sp = document.getElementById('filterSupplier').value.trim().toLowerCase();
+  const ft = document.getElementById('filterFeeType').value;
+  const st = document.getElementById('filterStatus').value;
+  filteredData = rawData.filter(r => {
+    if (bn && !r.billNo.toLowerCase().includes(bn)) return false;
+    if (sn && !r.stockNo.toLowerCase().includes(sn)) return false;
+    if (sp && !r.supplierName.toLowerCase().includes(sp)) return false;
+    if (ft && r.feeType !== ft) return false;
+    if (st && r.status !== st) return false;
+    return true;
+  });
+  currentPage = 1;
+  renderTable();
+  showToast(`查询完成，共找到 ${filteredData.length} 条记录`, 'success');
+}
+function doReset() {
+  document.getElementById('filterBillNo').value = '';
+  document.getElementById('filterStockNo').value = '';
+  document.getElementById('filterSupplier').value = '';
+  document.getElementById('filterFeeType').value = '';
+  document.getElementById('filterStatus').value = '';
+  filteredData = [...rawData];
+  currentPage = 1;
+  renderTable();
+}
+
+/* ─── MODAL ─────────────────────────────────────────────────────────────── */
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
+});
+
+/* ─── IMPORT MODAL ──────────────────────────────────────────────────────── */
+function openImportModal() {
+  importedExcelFiles.length = 0;
+  importedBillFiles.length = 0;
+  document.getElementById('excelFileList').innerHTML = '';
+  document.getElementById('billFileList').innerHTML = '';
+  selectImportType('estimate');
+  openModal('importModal');
+}
+
+function selectImportType(type) {
+  currentImportType = type;
+  const lblE = document.getElementById('lbl-estimate');
+  const lblB = document.getElementById('lbl-bill');
+  const billSection = document.getElementById('billAttachSection');
+  const tplName = document.getElementById('templateName');
+  if (type === 'estimate') {
+    lblE.style.borderColor = '#1677ff'; lblE.style.background = '#f0f7ff';
+    lblB.style.borderColor = '#d9d9d9'; lblB.style.background = '';
+    billSection.style.display = 'none';
+    tplName.textContent = '暂估费用导入模板.xlsx';
+    document.querySelector('input[value="estimate"]').checked = true;
+  } else {
+    lblB.style.borderColor = '#d46b08'; lblB.style.background = '#fff7e6';
+    lblE.style.borderColor = '#d9d9d9'; lblE.style.background = '';
+    billSection.style.display = 'block';
+    tplName.textContent = '账单费用导入模板.xlsx';
+    document.querySelector('input[value="bill"]').checked = true;
+  }
+}
+
+function handleFileInput(input, listId) {
+  const files = Array.from(input.files);
+  const target = listId === 'excelFileList' ? importedExcelFiles : importedBillFiles;
+  files.forEach(f => { if (!target.find(x => x.name === f.name)) target.push(f); });
+  renderFileList(listId, target);
+}
+
+function renderFileList(listId, arr) {
+  const c = document.getElementById(listId);
+  const isPdf = listId === 'billFileList';
+  c.innerHTML = arr.map((f, i) => `
+    <div class="file-item">
+      <div class="file-item-name">
+        <span class="file-icon">${isPdf ? '&#128196;' : '&#128190;'}</span>
+        <span>${f.name}</span>
+        <span style="color:#999;font-size:11px;margin-left:4px;">(${(f.size/1024).toFixed(1)} KB)</span>
+      </div>
+      <span class="file-item-remove" onclick="removeFile('${listId}',${i})">&#10005;</span>
+    </div>`).join('');
+}
+
+function removeFile(listId, idx) {
+  const target = listId === 'excelFileList' ? importedExcelFiles : importedBillFiles;
+  target.splice(idx, 1);
+  renderFileList(listId, target);
+}
+
+function handleDragOver(e, zoneId) { e.preventDefault(); document.getElementById(zoneId).classList.add('dragover'); }
+function handleDragLeave(zoneId) { document.getElementById(zoneId).classList.remove('dragover'); }
+function handleDrop(e, inputId, listId) {
+  e.preventDefault();
+  document.getElementById(e.currentTarget.id).classList.remove('dragover');
+  const dt = e.dataTransfer;
+  const fakeInput = { files: dt.files };
+  handleFileInput(fakeInput, listId);
+}
+
+function submitImport() {
+  if (importedExcelFiles.length === 0) { showToast('请先上传费用数据 Excel 文件', 'error'); return; }
+  if (currentImportType === 'bill' && importedBillFiles.length === 0) {
+    showToast('账单导入必须上传物流商原始对账单附件！', 'error'); return;
+  }
+  closeModal('importModal');
+  const newId = rawData.length + 1;
+  const newRow = {
+    id: newId,
+    feeType: currentImportType,
+    headTail: '头程',
+    billNo: `TC-${Date.now().toString().slice(-10)}`,
+    stockNo: currentImportType === 'bill' ? `ASN${Date.now().toString().slice(-12)}` : `SQ${Date.now().toString().slice(-12)}`,
+    shopCode: '', shopName: '', supplierCode: '310000',
+    supplierName: '黑龙江天府盛国际物流有限责任...',
+    status: 'pending',
+    attachments: importedBillFiles.map(f => f.name)
+  };
+  rawData.unshift(newRow);
+  filteredData = [...rawData];
+  renderTable();
+  showToast(`导入成功！新增 1 条${currentImportType === 'bill' ? '账单' : '暂估'}费用记录，状态：待审核`, 'success');
+}
+
+/* ─── AUDIT MODAL ───────────────────────────────────────────────────────── */
+function openAudit(id) {
+  const r = rawData.find(x => x.id === id);
+  if (!r) return;
+  const isBill = r.feeType === 'bill';
+  document.getElementById('auditModalTitle').textContent = `费用审核 - ${r.billNo}`;
+
+  let bodyHtml = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      ${isBill ? '<span class="tag tag-bill" style="font-size:13px;padding:4px 12px;">账单</span>' : '<span class="tag tag-estimate" style="font-size:13px;padding:4px 12px;">暂估</span>'}
+      <span style="font-size:13px;color:#555;">单据号：<strong style="color:#1a1a2e;">${r.billNo}</strong></span>
+      <span style="color:#ddd;">|</span>
+      <span style="font-size:13px;color:#555;">出入库单：<strong>${r.stockNo}</strong></span>
+    </div>`;
+
+  if (isBill) {
+    bodyHtml += `
+    <div class="audit-grid">
+      <div>
+        <div class="audit-panel">
+          <div class="audit-panel-title"><div class="dot"></div>系统解析数据（来自导入 Excel）</div>
+          <div class="detail-row"><span class="detail-label">供应商</span><span class="detail-value">${r.supplierName}</span></div>
+          <div class="detail-row"><span class="detail-label">头尾程类型</span><span class="detail-value">${r.headTail}</span></div>
+          <div class="detail-row"><span class="detail-label">出入库单号</span><span class="detail-value">${r.stockNo}</span></div>
+          <div class="detail-row"><span class="detail-label">供应商编码</span><span class="detail-value">${r.supplierCode}</span></div>
+          <div class="detail-row"><span class="detail-label">费用类型</span><span class="detail-value"><span class="tag tag-bill">账单</span></span></div>
+          <div style="background:#fff8f0;border:1px solid #ffd591;border-radius:6px;padding:14px;margin-top:12px;">
+            <div style="font-size:11px;color:#888;margin-bottom:6px;">账单费用合计</div>
+            <div class="amount-big">CNY 4,500.00</div>
+            <div style="margin-top:10px;">
+              <table style="width:100%;font-size:11px;border-collapse:collapse;">
+                <thead><tr style="background:#f5f7fa;"><th style="padding:5px 8px;text-align:left;color:#888;">费用项</th><th style="padding:5px 8px;text-align:right;color:#888;">金额</th><th style="padding:5px 8px;text-align:right;color:#888;">税率</th></tr></thead>
+                <tbody>
+                  <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 8px;">基本运费</td><td style="padding:5px 8px;text-align:right;">3,800.00</td><td style="padding:5px 8px;text-align:right;">6%</td></tr>
+                  <tr style="border-bottom:1px solid #f0f0f0;"><td style="padding:5px 8px;">燃油附加费</td><td style="padding:5px 8px;text-align:right;">400.00</td><td style="padding:5px 8px;text-align:right;">6%</td></tr>
+                  <tr><td style="padding:5px 8px;">旺季附加费</td><td style="padding:5px 8px;text-align:right;">300.00</td><td style="padding:5px 8px;text-align:right;">6%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="audit-panel" style="background:#2a2a2a;border-color:#444;padding:0;overflow:hidden;">
+          <div style="background:#1a2340;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="color:#afc4ff;font-size:12px;font-weight:600;">原始账单预览（${r.attachments.length} 个文件）</span>
+          </div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:8px;">
+            ${r.attachments.map((a,i) => `
+              <div class="file-preview-card ${i===0?'active':''}" id="fpc-${id}-${i}" onclick="selectPreview(${id},${i},'${a}')">
+                <div class="fpc-header">
+                  <span style="font-size:14px;color:#ff9999;">&#128196;</span>
+                  <span>${a}</span>
+                </div>
+              </div>`).join('')}
+          </div>
+          <div id="pdfPreviewArea" style="padding:10px;">
+            ${buildPdfPreview(r.attachments[0] || '', r)}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-warning" style="margin-top:14px;">
+      <span style="font-size:15px;">&#9432;</span>
+      <span>请仔细对比左侧系统解析数据与右侧原始账单内容，确认金额、费用项与供应商信息完全一致后，再点击审核通过。</span>
+    </div>`;
+  } else {
+    bodyHtml += `
+    <div class="audit-panel">
+      <div class="audit-panel-title"><div class="dot"></div>暂估费用明细</div>
+      <div class="detail-row"><span class="detail-label">供应商</span><span class="detail-value">${r.supplierName}</span></div>
+      <div class="detail-row"><span class="detail-label">头尾程类型</span><span class="detail-value">${r.headTail}</span></div>
+      <div class="detail-row"><span class="detail-label">出入库单号</span><span class="detail-value">${r.stockNo}</span></div>
+      <div class="detail-row"><span class="detail-label">费用类型</span><span class="detail-value"><span class="tag tag-estimate">暂估</span></span></div>
+      <div class="detail-row"><span class="detail-label">暂估金额</span><span class="detail-value amount-big">CNY 2,100.00</span></div>
+    </div>
+    <div class="alert alert-info" style="margin-top:14px;">
+      <span style="font-size:15px;">&#9432;</span>
+      <span>暂估费用审核通过后将自动写入费用分摊池，待实际账单到达时进行差额冲销处理。</span>
+    </div>`;
+  }
+
+  document.getElementById('auditModalBody').innerHTML = bodyHtml;
+  document.getElementById('auditModalFooter').innerHTML = `
+    <button class="btn btn-default" onclick="closeModal('auditModal')">关闭</button>
+    <button class="btn btn-danger btn-sm" onclick="doReject(${id})" style="height:32px;padding:0 16px;font-size:13px;">驳回</button>
+    <button class="btn btn-success" style="height:32px;padding:0 18px;font-size:13px;" onclick="confirmAuditPass(${id})">&#10003; 审核通过并入账</button>`;
+  openModal('auditModal');
+}
+
+function buildPdfPreview(filename, r) {
+  return `<div class="pdf-page">
+    <div class="pdf-logo">顺丰国际物流有限公司</div>
+    <div class="pdf-subtitle">对账单 / Statement of Account</div>
+    <div class="pdf-meta">
+      <span>账期：2026年3月</span>
+      <span>客户：Kuston 供速通</span>
+      <span>编号：${filename}</span>
+    </div>
+    <table class="pdf-table">
+      <thead><tr><th>费用项</th><th>数量</th><th>单价</th><th>金额(CNY)</th></tr></thead>
+      <tbody>
+        <tr><td>基本运费</td><td>1</td><td>3,800.00</td><td>3,800.00</td></tr>
+        <tr><td>燃油附加费</td><td>1</td><td>400.00</td><td>400.00</td></tr>
+        <tr><td>旺季附加费</td><td>1</td><td>300.00</td><td>300.00</td></tr>
+      </tbody>
+    </table>
+    <div class="pdf-total">合计金额：<strong>CNY 4,500.00</strong></div>
+    <div class="pdf-stamp"><div class="stamp">顺丰<br>国际<br>业务专用章</div></div>
+  </div>`;
+}
+
+function selectPreview(rowId, idx, filename) {
+  const r = rawData.find(x => x.id === rowId);
+  r.attachments.forEach((_, i) => {
+    const el = document.getElementById(`fpc-${rowId}-${i}`);
+    if (el) el.classList.toggle('active', i === idx);
+  });
+  document.getElementById('pdfPreviewArea').innerHTML = buildPdfPreview(filename, r);
+}
+
+function previewAttachments(id) {
+  openAudit(id);
+}
+
+function confirmAuditPass(id) {
+  closeModal('auditModal');
+  document.getElementById('confirmText').textContent = '确定审核通过此单据？';
+  document.getElementById('confirmSubText').textContent = '审核通过后，费用将自动写入费用分摊池，不可撤销。';
+  document.getElementById('confirmOkBtn').onclick = () => doAuditPass(id);
+  openModal('confirmModal');
+}
+
+function doAuditPass(id) {
+  const r = rawData.find(x => x.id === id);
+  if (r) r.status = 'done';
+  filteredData = [...rawData];
+  closeModal('confirmModal');
+  renderTable();
+  showToast('审核通过！该费用已成功写入费用分摊池', 'success');
+}
+
+function doReject(id) {
+  closeModal('auditModal');
+  const r = rawData.find(x => x.id === id);
+  if (r) r.status = 'rejected';
+  filteredData = [...rawData];
+  renderTable();
+  showToast('已驳回该费用单据', 'warning');
+}
+
+function viewDetail(id) { showToast(`查看单据详情：${rawData.find(x=>x.id===id)?.billNo}`, 'success'); }
+function editRow(id) { showToast(`进入编辑模式：${rawData.find(x=>x.id===id)?.billNo}`, 'success'); }
+function viewLog(id) { showToast(`查看操作日志：${rawData.find(x=>x.id===id)?.billNo}`, 'success'); }
+
+/* ─── TOAST ─────────────────────────────────────────────────────────────── */
+function showToast(msg, type = '') {
+  const c = document.getElementById('toast-container');
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+
+/* ─── INIT ──────────────────────────────────────────────────────────────── */
+renderTable();
+selectImportType('estimate');
+</script>
+</body>
+</html>
