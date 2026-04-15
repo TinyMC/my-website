@@ -1,0 +1,1388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>其他头尾程费用导入 - Kuston 供速通</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: "Microsoft YaHei", "PingFang SC", sans-serif; font-size: 13px; background: #f0f2f5; color: #333; display: flex; height: 100vh; overflow: hidden; }
+
+  /* ─── SIDEBAR ─────────────────────────────────────────────────── */
+  .sidebar { width: 120px; background: #1a2340; display: flex; flex-direction: column; flex-shrink: 0; height: 100vh; overflow-y: auto; }
+  .sidebar-logo { padding: 14px 10px; border-bottom: 1px solid #2a3560; text-align: center; }
+  .sidebar-logo img { width: 90px; }
+  .sidebar-logo-text { color: #fff; font-size: 13px; font-weight: bold; margin-top: 4px; letter-spacing: 1px; }
+  .sidebar-menu { flex: 1; }
+  .menu-item { display: flex; flex-direction: column; align-items: center; padding: 12px 6px; cursor: pointer; color: #8a9cc8; font-size: 11px; gap: 4px; transition: background 0.2s, color 0.2s; border-left: 3px solid transparent; }
+  .menu-item:hover { background: #243055; color: #fff; }
+  .menu-item.active { background: #1e3a6e; color: #4da3ff; border-left-color: #4da3ff; }
+  .menu-item .m-icon { font-size: 17px; }
+  .menu-group { padding: 8px 10px 4px; color: #4a5a80; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; }
+  .sub-menu-item { padding: 9px 10px 9px 18px; cursor: pointer; color: #8a9cc8; font-size: 12px; transition: background 0.15s, color 0.15s; border-left: 3px solid transparent; }
+  .sub-menu-item:hover { background: #243055; color: #fff; }
+  .sub-menu-item.active { background: #1e3a6e; color: #4da3ff; border-left-color: #4da3ff; font-weight: bold; }
+
+  /* ─── MAIN AREA ───────────────────────────────────────────────── */
+  .main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+  /* ─── TOP NAV ─────────────────────────────────────────────────── */
+  .topnav { height: 44px; background: #1a2340; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; flex-shrink: 0; border-bottom: 1px solid #2a3560; }
+  .topnav-left { display: flex; align-items: center; gap: 8px; }
+  .topnav-menu-btn { color: #8a9cc8; font-size: 18px; cursor: pointer; padding: 4px; }
+  .breadcrumb { color: #8a9cc8; font-size: 12px; display: flex; align-items: center; gap: 4px; }
+  .breadcrumb span { color: #cdd; }
+  .breadcrumb .sep { color: #4a5a80; }
+  .breadcrumb .current { color: #c0cfff; }
+  .topnav-right { display: flex; align-items: center; gap: 14px; color: #8a9cc8; font-size: 12px; }
+  .topnav-right .user { color: #c0cfff; cursor: pointer; }
+  .topnav-right .divider { width: 1px; height: 14px; background: #3a4a70; }
+  .topnav-right a { color: #8a9cc8; text-decoration: none; cursor: pointer; }
+  .topnav-right a:hover { color: #fff; }
+
+  /* ─── CONTENT WRAPPER ─────────────────────────────────────────── */
+  .content-wrap { flex: 1; overflow-y: auto; display: flex; flex-direction: column; }
+
+  /* ─── TAB BAR ─────────────────────────────────────────────────── */
+  .tab-bar { background: #fff; border-bottom: 1px solid #e4e8f0; padding: 0 16px; display: flex; align-items: center; gap: 0; flex-shrink: 0; }
+  .tab-item { padding: 10px 16px 8px; font-size: 13px; color: #666; cursor: pointer; border-bottom: 2px solid transparent; display: flex; align-items: center; gap: 6px; transition: color 0.2s; white-space: nowrap; }
+  .tab-item:hover { color: #1677ff; }
+  .tab-item.active { color: #1677ff; border-bottom-color: #1677ff; font-weight: 500; }
+  .tab-item .tab-close { color: #999; font-size: 11px; padding: 1px 3px; border-radius: 3px; }
+  .tab-item .tab-close:hover { background: #f0f0f0; color: #333; }
+
+  /* ─── PAGE BODY ───────────────────────────────────────────────── */
+  .page-body { padding: 14px 16px; flex: 1; }
+
+  /* ─── SEARCH BAR ──────────────────────────────────────────────── */
+  .search-bar { background: #fff; border-radius: 4px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; flex-wrap: wrap; gap: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+  .search-item { display: flex; align-items: center; gap: 6px; }
+  .search-item label { color: #666; white-space: nowrap; font-size: 12px; }
+  .s-input { height: 30px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 0 10px; font-size: 12px; color: #333; outline: none; width: 150px; transition: border-color 0.2s; }
+  .s-input:focus { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,0.1); }
+  .s-select { height: 30px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 0 24px 0 10px; font-size: 12px; color: #333; outline: none; appearance: none; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E") right 8px center no-repeat; cursor: pointer; min-width: 120px; transition: border-color 0.2s; }
+  .s-select:focus { border-color: #1677ff; }
+  .search-btns { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+  .btn { height: 30px; padding: 0 16px; border-radius: 4px; font-size: 12px; cursor: pointer; border: 1px solid transparent; transition: all 0.2s; display: inline-flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .btn-primary { background: #1677ff; color: #fff; border-color: #1677ff; }
+  .btn-primary:hover { background: #4096ff; border-color: #4096ff; }
+  .btn-default { background: #fff; color: #333; border-color: #d9d9d9; }
+  .btn-default:hover { border-color: #1677ff; color: #1677ff; }
+  .btn-success { background: #52c41a; color: #fff; border-color: #52c41a; }
+  .btn-success:hover { background: #73d13d; }
+  .btn-danger { background: #ff4d4f; color: #fff; border-color: #ff4d4f; }
+  .btn-danger:hover { background: #ff7875; }
+  .btn-warning { background: #fa8c16; color: #fff; border-color: #fa8c16; }
+  .btn-warning:hover { background: #ffa940; }
+  .btn-sm { height: 24px; padding: 0 10px; font-size: 12px; }
+  .btn-lg { height: 38px; padding: 0 24px; font-size: 14px; }
+  .btn-link { background: none; border: none; color: #1677ff; padding: 0 4px; cursor: pointer; font-size: 12px; }
+  .btn-link:hover { color: #4096ff; }
+  .btn-link.danger { color: #ff4d4f; }
+  .btn-link.danger:hover { color: #ff7875; }
+
+  /* ─── TABLE ───────────────────────────────────────────────────── */
+  .table-wrap { background: #fff; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; }
+  thead th { background: #f5f7fa; color: #666; font-weight: 500; padding: 10px 12px; text-align: left; border-bottom: 1px solid #e8ecf2; white-space: nowrap; font-size: 12px; }
+  tbody tr { border-bottom: 1px solid #f0f2f8; transition: background 0.15s; }
+  tbody tr:hover { background: #f8faff; }
+  tbody td { padding: 9px 12px; color: #333; font-size: 12px; vertical-align: middle; }
+  .td-ops { display: flex; align-items: center; gap: 2px; flex-wrap: nowrap; }
+
+  /* ─── TAGS ────────────────────────────────────────────────────── */
+  .tag { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 3px; font-size: 11px; white-space: nowrap; font-weight: 500; }
+  .tag-estimate { background: #e6f7ff; color: #1677ff; border: 1px solid #91caff; }
+  .tag-bill { background: #fff2e8; color: #d46b08; border: 1px solid #ffd591; }
+  .tag-status-pending { background: #fffbe6; color: #d46b08; border: 1px solid #ffe58f; }
+  .tag-status-done { background: #f6ffed; color: #389e0d; border: 1px solid #b7eb8f; }
+  .tag-status-rejected { background: #fff1f0; color: #cf1322; border: 1px solid #ffa39e; }
+  .tag-head { background: #f9f0ff; color: #722ed1; border: 1px solid #d3adf7; }
+  .tag-tail { background: #e6fffb; color: #08979c; border: 1px solid #87e8de; }
+
+  /* ─── PAGINATION ──────────────────────────────────────────────── */
+  .pagination { display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-top: 1px solid #f0f2f8; background: #fff; font-size: 12px; color: #666; }
+  .page-info { }
+  .page-btns { display: flex; align-items: center; gap: 4px; }
+  .page-btn { height: 28px; min-width: 28px; padding: 0 6px; border: 1px solid #d9d9d9; border-radius: 4px; background: #fff; cursor: pointer; font-size: 12px; color: #333; display: inline-flex; align-items: center; justify-content: center; transition: all 0.2s; }
+  .page-btn:hover { border-color: #1677ff; color: #1677ff; }
+  .page-btn.active { background: #1677ff; border-color: #1677ff; color: #fff; }
+  .page-btn:disabled { color: #d9d9d9; cursor: not-allowed; }
+  .page-right { display: flex; align-items: center; gap: 8px; }
+  .page-jump { display: flex; align-items: center; gap: 4px; }
+  .page-jump input { width: 46px; height: 28px; border: 1px solid #d9d9d9; border-radius: 4px; text-align: center; font-size: 12px; outline: none; }
+
+  /* ─── MODAL OVERLAY ───────────────────────────────────────────── */
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1000; display: flex; align-items: center; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.2s; }
+  .modal-overlay.show { opacity: 1; pointer-events: all; }
+  .modal { background: #fff; border-radius: 6px; box-shadow: 0 8px 32px rgba(0,0,0,0.22); display: flex; flex-direction: column; transform: scale(0.95); transition: transform 0.2s; }
+  .modal-overlay.show .modal { transform: scale(1); }
+  .modal-header { padding: 14px 20px 12px; border-bottom: 1px solid #f0f0f0; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+  .modal-header h3 { font-size: 15px; font-weight: 600; color: #1a1a2e; }
+  .modal-close { background: none; border: none; font-size: 18px; color: #999; cursor: pointer; padding: 2px 6px; border-radius: 4px; line-height: 1; }
+  .modal-close:hover { background: #f5f5f5; color: #333; }
+  .modal-body { padding: 20px; overflow-y: auto; flex: 1; }
+  .modal-footer { padding: 12px 20px; border-top: 1px solid #f0f0f0; display: flex; justify-content: flex-end; gap: 8px; flex-shrink: 0; }
+
+  /* ─── FORM ────────────────────────────────────────────────────── */
+  .form-row { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 16px; }
+  .form-label { min-width: 110px; text-align: right; padding-top: 7px; color: #555; font-size: 13px; flex-shrink: 0; }
+  .form-label.required::before { content: "* "; color: #ff4d4f; }
+  .form-control { flex: 1; }
+  .f-input { height: 32px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 0 11px; font-size: 13px; width: 100%; outline: none; transition: border-color 0.2s; }
+  .f-input:focus { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,0.1); }
+  .f-select { height: 32px; border: 1px solid #d9d9d9; border-radius: 4px; padding: 0 28px 0 11px; font-size: 13px; width: 100%; outline: none; appearance: none; background: #fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23999'/%3E%3C/svg%3E") right 10px center no-repeat; cursor: pointer; transition: border-color 0.2s; }
+  .f-select:focus { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,0.1); }
+
+  /* ─── UPLOAD ZONE ─────────────────────────────────────────────── */
+  .upload-zone { border: 1.5px dashed #d9d9d9; border-radius: 6px; padding: 24px; text-align: center; cursor: pointer; transition: all 0.2s; background: #fafafa; }
+  .upload-zone:hover, .upload-zone.dragover { border-color: #1677ff; background: #f0f7ff; }
+  .upload-zone .upload-icon { font-size: 28px; color: #bbb; margin-bottom: 8px; }
+  .upload-zone p { color: #666; font-size: 13px; margin-bottom: 4px; }
+  .upload-zone p span { color: #1677ff; font-weight: 500; }
+  .upload-zone small { color: #999; font-size: 11px; }
+  .upload-zone input[type="file"] { display: none; }
+  .file-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .file-item { display: flex; align-items: center; justify-content: space-between; background: #f6f8ff; border: 1px solid #d0e0ff; border-radius: 4px; padding: 7px 12px; }
+  .file-item-name { display: flex; align-items: center; gap: 6px; color: #1677ff; font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 360px; }
+  .file-item-name .file-icon { color: #ff4d4f; flex-shrink: 0; }
+  .file-item-remove { color: #999; cursor: pointer; font-size: 15px; padding: 0 3px; flex-shrink: 0; }
+  .file-item-remove:hover { color: #ff4d4f; }
+
+  /* ─── ALERT BOX ───────────────────────────────────────────────── */
+  .alert { border-radius: 4px; padding: 10px 14px; font-size: 12px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 8px; }
+  .alert-info { background: #e6f4ff; border: 1px solid #91caff; color: #0958d9; }
+  .alert-warning { background: #fffbe6; border: 1px solid #ffe58f; color: #d46b08; }
+  .alert-success { background: #f6ffed; border: 1px solid #b7eb8f; color: #389e0d; }
+  .alert-error { background: #fff1f0; border: 1px solid #ffa39e; color: #cf1322; }
+
+  /* ─── DIVIDER ─────────────────────────────────────────────────── */
+  .divider { height: 1px; background: #f0f2f8; margin: 16px 0; }
+  .section-title { font-size: 13px; font-weight: 600; color: #1a1a2e; margin-bottom: 12px; padding-left: 8px; border-left: 3px solid #1677ff; }
+
+  /* ─── AUDIT MODAL SPECIFIC ────────────────────────────────────── */
+  .audit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .audit-panel { background: #f8faff; border: 1px solid #e4e8f5; border-radius: 6px; padding: 16px; }
+  .audit-panel-title { font-size: 13px; font-weight: 600; color: #1a2340; margin-bottom: 12px; display: flex; align-items: center; gap: 6px; }
+  .audit-panel-title .dot { width: 8px; height: 8px; border-radius: 50%; background: #1677ff; }
+  .detail-row { display: flex; align-items: flex-start; margin-bottom: 10px; font-size: 12px; }
+  .detail-label { min-width: 90px; color: #888; flex-shrink: 0; }
+  .detail-value { color: #222; font-weight: 500; flex: 1; }
+  .amount-big { font-size: 20px; color: #e6312d; font-weight: 700; }
+  .pdf-preview-area { border: 1px solid #dde3f0; border-radius: 6px; overflow: hidden; background: #595959; min-height: 320px; display: flex; flex-direction: column; }
+  .pdf-toolbar { background: #3a3a3a; padding: 6px 12px; display: flex; align-items: center; justify-content: space-between; }
+  .pdf-toolbar span { color: #ccc; font-size: 11px; }
+  .pdf-toolbar button { background: #555; border: none; color: #ddd; padding: 3px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; }
+  .pdf-doc { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .pdf-page { background: #fff; width: 100%; padding: 28px 24px; box-shadow: 0 4px 16px rgba(0,0,0,0.4); border-radius: 2px; }
+  .pdf-logo { text-align: center; font-size: 16px; font-weight: bold; color: #1a2340; margin-bottom: 6px; }
+  .pdf-subtitle { text-align: center; color: #888; font-size: 11px; margin-bottom: 14px; border-bottom: 1px solid #ddd; padding-bottom: 10px; }
+  .pdf-meta { display: flex; justify-content: space-between; margin-bottom: 14px; font-size: 11px; color: #555; }
+  .pdf-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .pdf-table th { background: #1a2340; color: #fff; padding: 6px 8px; text-align: left; }
+  .pdf-table td { border-bottom: 1px solid #eee; padding: 6px 8px; }
+  .pdf-total { text-align: right; margin-top: 12px; font-size: 13px; }
+  .pdf-total strong { color: #d46b08; }
+  .pdf-stamp { text-align: right; margin-top: 16px; }
+  .stamp { display: inline-block; border: 2px solid #e63946; color: #e63946; border-radius: 50%; width: 64px; height: 64px; line-height: 1.1; text-align: center; font-size: 9px; padding-top: 10px; transform: rotate(-20deg); opacity: 0.8; }
+  .files-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-top: 8px; }
+  .file-preview-card { border: 1px solid #dde3f0; border-radius: 6px; overflow: hidden; cursor: pointer; transition: box-shadow 0.2s; }
+  .file-preview-card:hover { box-shadow: 0 3px 12px rgba(22,119,255,0.18); border-color: #91caff; }
+  .file-preview-card.active { border-color: #1677ff; box-shadow: 0 0 0 2px rgba(22,119,255,0.2); }
+  .fpc-header { background: #1a2340; padding: 8px 12px; display: flex; align-items: center; gap: 6px; }
+  .fpc-header span { color: #afc4ff; font-size: 11px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .fpc-body { padding: 12px; background: #f5f7ff; min-height: 60px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #999; }
+  .notice-bar { background: #fffbe6; border: 1px solid #ffe58f; border-radius: 4px; padding: 8px 14px; font-size: 12px; color: #8a5c00; display: flex; align-items: center; gap: 6px; margin-bottom: 14px; }
+
+  /* ─── CONFIRM MODAL ───────────────────────────────────────────── */
+  .confirm-icon { text-align: center; margin-bottom: 12px; }
+  .confirm-icon .icon-circle { width: 52px; height: 52px; border-radius: 50%; background: #e6f4ff; border: 2px solid #91caff; display: inline-flex; align-items: center; justify-content: center; font-size: 24px; color: #1677ff; }
+  .confirm-text { text-align: center; font-size: 15px; color: #333; font-weight: 500; }
+
+  /* ─── TOAST ───────────────────────────────────────────────────── */
+  #toast-container { position: fixed; top: 60px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+  .toast { background: rgba(0,0,0,0.8); color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 13px; display: flex; align-items: center; gap: 8px; animation: toastIn 0.3s ease, toastOut 0.3s ease 2.2s forwards; min-width: 200px; justify-content: center; }
+  .toast.success { background: rgba(82,196,26,0.92); }
+  .toast.error { background: rgba(255,77,79,0.92); }
+  .toast.warning { background: rgba(250,140,22,0.92); }
+  @keyframes toastIn { from { opacity:0; transform:translateY(-12px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes toastOut { from { opacity:1; } to { opacity:0; } }
+
+  /* ─── STEP INDICATOR ──────────────────────────────────────────── */
+  .steps { display: flex; align-items: center; margin-bottom: 20px; }
+  .step { display: flex; align-items: center; flex: 1; }
+  .step:last-child { flex: none; }
+  .step-node { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; flex-shrink: 0; }
+  .step-node.done { background: #1677ff; color: #fff; }
+  .step-node.active { background: #1677ff; color: #fff; box-shadow: 0 0 0 3px rgba(22,119,255,0.2); }
+  .step-node.todo { background: #e8eaf0; color: #999; }
+  .step-label { font-size: 11px; margin-top: 4px; color: #666; }
+  .step-label.active-lbl { color: #1677ff; font-weight: 600; }
+  .step-wrap { display: flex; flex-direction: column; align-items: center; }
+  .step-line { flex: 1; height: 2px; background: #e8eaf0; margin: 0 6px; margin-bottom: 14px; }
+  .step-line.done { background: #1677ff; }
+
+  /* ─── SCROLL ──────────────────────────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #c1c9d9; border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: #a0a9bc; }
+
+  .chip { display: inline-block; background: #f0f3fa; border: 1px solid #dde3f0; color: #666; border-radius: 12px; padding: 2px 10px; font-size: 11px; }
+  .attachment-badge { display: inline-flex; align-items: center; gap: 4px; background: #fff7e6; border: 1px solid #ffd591; color: #d46b08; border-radius: 3px; padding: 2px 8px; font-size: 11px; cursor: pointer; }
+  .attachment-badge:hover { background: #ffe7ba; }
+
+  /* ─── CSS VARIABLES FROM INDEX0414 (MERGED) ─── */
+  :root {
+    --primary: #1B5FA8;
+    --primary-light: #2b7de9;
+    --primary-bg: #EEF4FC;
+    --orange: #FA8C16;
+    --orange-bg: #FFF7E6;
+    --orange-border: #FFD591;
+    --green: #52C41A;
+    --green-bg: #F6FFED;
+    --red: #FF4D4F;
+    --red-bg: #FFF1F0;
+    --gray-1: #F5F7FA;
+    --gray-2: #E8ECF0;
+    --gray-3: #C9CDD4;
+    --gray-4: #86909C;
+    --gray-5: #4E5969;
+    --gray-6: #1D2129;
+    --radius: 6px;
+    --shadow-sm: 0 1px 4px rgba(0,0,0,.08);
+  }
+
+  /* ─── EDIT PAGE STYLES (MERGED) ─── */
+  .page-view { display: none; }
+  .page-view.active { display: block; }
+  
+  .edit-page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+  .edit-page-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+  .edit-breadcrumb { font-size: 13px; color: var(--gray-4); display: flex; align-items: center; gap: 6px; margin-bottom: 4px; }
+  .edit-breadcrumb a { color: var(--primary); cursor: pointer; text-decoration: none; }
+  .edit-breadcrumb a:hover { text-decoration: underline; }
+  .edit-section { margin-bottom: 20px; }
+  .edit-section-title { font-size: 14px; font-weight: 700; color: var(--gray-6); padding: 12px 20px; background: #fff; border-radius: var(--radius) var(--radius) 0 0; border: 1px solid var(--gray-2); border-bottom: none; display: flex; align-items: center; gap: 8px; }
+  .edit-section-title::before { content: ''; width: 4px; height: 16px; background: var(--primary); border-radius: 2px; display: block; }
+  .edit-section-body { background: #fff; border: 1px solid var(--gray-2); border-radius: 0 0 var(--radius) var(--radius); padding: 20px; }
+  .edit-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px 20px; }
+  .edit-form-item { display: flex; flex-direction: column; gap: 5px; }
+  .edit-form-item.span-2 { grid-column: span 2; }
+  .edit-form-item.span-3 { grid-column: span 3; }
+  .edit-label { font-size: 12.5px; color: var(--gray-5); font-weight: 500; }
+  .edit-label .required { color: var(--red); margin-left: 2px; }
+  .edit-control { height: 34px; border: 1px solid var(--gray-2); border-radius: var(--radius); padding: 0 10px; font-size: 13px; color: var(--gray-6); outline: none; background: #fff; transition: border-color .2s; width: 100%; }
+  .edit-control:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(27,95,168,.1); }
+  .edit-control[readonly] { background: var(--gray-1); color: var(--gray-4); cursor: not-allowed; }
+  textarea.edit-control { height: 72px; padding: 8px 10px; resize: vertical; line-height: 1.5; }
+
+  .type-banner { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-radius: var(--radius); margin-bottom: 20px; border: 1.5px solid; transition: all .3s; }
+  .type-banner.estimate { background: var(--primary-bg); border-color: #91CAFF; }
+  .type-banner.bill { background: var(--orange-bg); border-color: var(--orange-border); }
+  .type-banner-left { display: flex; align-items: center; gap: 12px; }
+  .type-banner-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+  .type-banner.estimate .type-banner-icon { background: var(--primary); }
+  .type-banner.bill .type-banner-icon { background: var(--orange); }
+  .type-banner-text .title { font-size: 15px; font-weight: 700; }
+  .type-banner.estimate .type-banner-text .title { color: var(--primary); }
+  .type-banner.bill .type-banner-text .title { color: var(--orange); }
+  .type-banner-text .sub { font-size: 12px; color: var(--gray-4); margin-top: 2px; }
+
+  .fee-edit-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .fee-edit-table th { background: #FAFBFC; padding: 8px 10px; text-align: left; font-weight: 600; font-size: 12.5px; color: var(--gray-5); border-bottom: 1px solid var(--gray-2); white-space: nowrap; }
+  .fee-edit-table td { padding: 6px 10px; border-bottom: 1px solid var(--gray-2); }
+  .fee-edit-table .inline-input { width: 100%; height: 30px; border: 1px solid var(--gray-2); border-radius: 4px; padding: 0 8px; font-size: 12.5px; outline: none; background: #fff; transition: border-color .2s; }
+  .fee-edit-table .inline-input:focus { border-color: var(--primary); }
+  .fee-total-row { background: var(--gray-1); font-weight: 600; }
+  
+  .upload-area { border: 2px dashed var(--gray-2); border-radius: var(--radius); padding: 24px; text-align: center; cursor: pointer; transition: all .2s; background: var(--gray-1); }
+  .upload-area:hover, .upload-area.drag-over { border-color: var(--primary); background: var(--primary-bg); }
+  .upload-area svg { width: 32px; height: 32px; color: var(--gray-3); margin-bottom: 8px; }
+  .upload-area .upload-text { font-size: 13px; color: var(--gray-4); }
+  .upload-area .upload-hint { font-size: 12px; color: var(--gray-3); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<!-- ─── SIDEBAR ─────────────────────────────────────────────────────────── -->
+<nav class="sidebar">
+  <div class="sidebar-logo">
+    <div style="background:#1677ff;color:#fff;border-radius:6px;font-size:18px;font-weight:900;padding:6px 10px;display:inline-block;letter-spacing:2px;">KS</div>
+    <div class="sidebar-logo-text">供速通</div>
+  </div>
+  <div class="sidebar-menu">
+    <div class="menu-item"><span class="m-icon">&#9776;</span><span>首页</span></div>
+    <div class="menu-item"><span class="m-icon">&#9741;</span><span>基础资料</span></div>
+    <div class="menu-item"><span class="m-icon">&#9735;</span><span>采购中心</span></div>
+    <div class="menu-item"><span class="m-icon">&#9744;</span><span>库存中心</span></div>
+    <div class="menu-item"><span class="m-icon">&#9678;</span><span>创意中心</span></div>
+    <div class="menu-item active"><span class="m-icon">&#9670;</span><span>财务中心</span></div>
+    <div class="sub-menu-item">1C数据管理</div>
+    <div class="sub-menu-item">资金收款认领</div>
+    <div class="sub-menu-item">出行管理</div>
+    <div class="sub-menu-item">保证金管理</div>
+    <div class="sub-menu-item">采购管理</div>
+    <div class="sub-menu-item">客户信息管理</div>
+    <div style="padding:6px 10px 4px;color:#4a5a80;font-size:10px;font-weight:600;letter-spacing:1px;">头尾程费用</div>
+    <div class="sub-menu-item active">其他头尾程...</div>
+    <div class="sub-menu-item">费用分摊</div>
+    <div class="menu-item"><span class="m-icon">&#9737;</span><span>供应链金融</span></div>
+  </div>
+</nav>
+
+<!-- ─── MAIN ──────────────────────────────────────────────────────────────── -->
+<div class="main">
+  <!-- TOP NAV -->
+  <div class="topnav">
+    <div class="topnav-left">
+      <span class="topnav-menu-btn">&#9776;</span>
+      <div class="breadcrumb">
+        <span>平台管理</span><span class="sep">/</span>
+        <span>财务中心</span><span class="sep">/</span>
+        <span>头尾程费用</span><span class="sep">/</span>
+        <span class="current" id="header-current">其他头尾程费用导入</span>
+      </div>
+    </div>
+    <div class="topnav-right">
+      <span>欢迎使用供速通业务平台！</span>
+      <span class="divider"></span>
+      <a>中文</a>
+      <span class="divider"></span>
+      <a>帮助</a>
+      <span class="divider"></span>
+      <a>系统产品端</a>
+      <span class="divider"></span>
+      <span class="user">彭*彭家辉</span>
+    </div>
+  </div>
+
+  <div class="content-wrap">
+    <!-- TAB BAR -->
+    <div class="tab-bar">
+      <div class="tab-item">首页</div>
+      <div class="tab-item active">其他头尾程费用导入 <span class="tab-close">&#10005;</span></div>
+    </div>
+
+    <!-- PAGE BODY -->
+    <div class="page-body">
+      <!-- ════════════════ LIST PAGE ════════════════ -->
+      <div id="page-list" class="page-view active">
+        <!-- SEARCH BAR -->
+        <div class="search-bar">
+          <div class="search-item">
+            <label>费用单号</label>
+            <input class="s-input" type="text" placeholder="请输入单据编号" id="filterBillNo" />
+          </div>
+          <div class="search-item">
+            <label>出入库单号</label>
+            <input class="s-input" type="text" placeholder="出入库单号" id="filterStockNo" />
+          </div>
+          <div class="search-item">
+            <label>供应商</label>
+            <input class="s-input" type="text" placeholder="供应商名称" id="filterSupplier" />
+          </div>
+          <div class="search-item">
+            <label>费用类型</label>
+            <select class="s-select" id="filterFeeType" style="min-width:110px;">
+              <option value="">全部</option>
+              <option value="estimate">暂估</option>
+              <option value="bill">账单</option>
+            </select>
+          </div>
+          <div class="search-item">
+            <label>审核状态</label>
+            <select class="s-select" id="filterStatus">
+              <option value="">全部状态</option>
+              <option value="pending">待审核</option>
+              <option value="done">已审核</option>
+              <option value="rejected">已驳回</option>
+            </select>
+          </div>
+          <div class="search-btns">
+            <button class="btn btn-primary" onclick="doSearch()">查询</button>
+            <button class="btn btn-default" onclick="doReset()">重置</button>
+            <button class="btn btn-primary" onclick="openImportModal()">导入</button>
+          </div>
+        </div>
+
+        <!-- TABLE -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>费用类型</th>
+                <th>头尾程类型</th>
+                <th>费用单号</th>
+                <th>出入库单号</th>
+                <th>公司主体名称</th>
+                <th>供应商编码</th>
+                <th>供应商名称</th>
+                <th>原始账单</th>
+                <th>状态</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+          <div class="pagination">
+            <span class="page-info">共 <strong id="totalCount">9</strong> 条 &nbsp; 10条/页</span>
+            <div class="page-btns" id="pageBtns"></div>
+            <div class="page-right">
+              <div class="page-jump">跳至 <input type="number" value="1" min="1" id="jumpInput" /> 页</div>
+              <button class="btn btn-default btn-sm" onclick="doJump()">确认</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════════════════ EDIT PAGE (MERGED) ════════════════ -->
+      <div id="page-edit" class="page-view">
+        <div class="edit-page-header">
+          <div>
+            <div class="edit-breadcrumb">
+              <a onclick="goList()">其他头尾程费用</a>
+              <span>/</span>
+              <span id="edit-breadcrumb-action">编辑费用单</span>
+            </div>
+            <div class="edit-page-title">
+              <span id="edit-page-main-title">编辑费用单</span>
+              <span id="edit-type-tag" class="tag tag-blue"></span>
+            </div>
+          </div>
+          <div style="display:flex;gap:10px;">
+            <button class="btn btn-default btn-lg" onclick="goList()">取消</button>
+            <button class="btn btn-primary btn-lg" onclick="submitEdit()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              提交保存
+            </button>
+          </div>
+        </div>
+
+        <!-- Type Banner -->
+        <div id="edit-type-banner" class="type-banner estimate">
+          <div class="type-banner-left">
+            <div class="type-banner-icon">
+              <svg id="edit-banner-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            </div>
+            <div class="type-banner-text">
+              <div class="title" id="edit-banner-title">暂估费用</div>
+              <div class="sub" id="edit-banner-sub">此单据为暂估类型，暂无需上传原始账单附件，后续可更新为实际账单</div>
+            </div>
+          </div>
+          <div>
+            <div class="form-label" style="margin-bottom:4px;">费用类型</div>
+            <select class="edit-control" id="edit-fee-type" onchange="onEditTypeChange()" style="width:120px;">
+              <option value="estimate">暂估</option>
+              <option value="bill">账单</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Basic Info -->
+        <div class="edit-section">
+          <div class="edit-section-title">基础信息</div>
+          <div class="edit-section-body">
+            <div class="edit-grid">
+              <div class="edit-form-item">
+                <div class="edit-label">费用单号 <span class="required">*</span></div>
+                <input class="edit-control" id="edit-no" readonly>
+              </div>
+              <div class="edit-form-item">
+                <div class="edit-label">头尾程类型 <span class="required">*</span></div>
+                <select class="edit-control" id="edit-route">
+                  <option value="head">头程</option>
+                  <option value="tail">尾程</option>
+                </select>
+              </div>
+              <div class="edit-form-item">
+                <div class="edit-label">供应商（物流商）<span class="required">*</span></div>
+                <input class="edit-control" id="edit-vendor" placeholder="请输入供应商名称">
+              </div>
+              <div class="edit-form-item">
+                <div class="edit-label">领航单据号</div>
+                <input class="edit-control" id="edit-ship-no" placeholder="请输入领航单据号">
+              </div>
+              <div class="edit-form-item">
+                <div class="edit-label">关联出入库单</div>
+                <input class="edit-control" id="edit-asn-no" placeholder="请输入出入库单号">
+              </div>
+              <div class="edit-form-item">
+                <div class="edit-label">币种 <span class="required">*</span></div>
+                <select class="edit-control" id="edit-currency">
+                  <option value="CNY">CNY 人民币</option>
+                  <option value="USD">USD 美元</option>
+                  <option value="EUR">EUR 欧元</option>
+                </select>
+              </div>
+
+              <!-- Period fields - dynamic -->
+              <div id="edit-period-wrap" class="edit-form-item span-3"></div>
+
+              <div class="edit-form-item span-3">
+                <div class="edit-label">备注说明</div>
+                <textarea class="edit-control" id="edit-remark" placeholder="请输入备注信息（选填）"></textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fee Detail -->
+        <div class="edit-section">
+          <div class="edit-section-title">费用明细</div>
+          <div class="edit-section-body">
+            <table class="fee-edit-table" id="fee-detail-table">
+              <thead>
+                <tr>
+                  <th style="width:32px;">#</th>
+                  <th>费用大类</th>
+                  <th>费用项目</th>
+                  <th>金额</th>
+                  <th style="width:60px;">操作</th>
+                </tr>
+              </thead>
+              <tbody id="fee-detail-body"></tbody>
+              <tfoot>
+                <tr class="fee-total-row">
+                  <td colspan="3" style="text-align:right;padding-right:12px;">合计总金额：</td>
+                  <td id="fee-total-display" style="color:var(--red);font-size:15px;"></td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+            <div style="margin-top:12px;">
+              <button class="btn btn-default btn-sm" onclick="addFeeRow()">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                新增费用行
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Attachment Section (dynamic) -->
+        <div id="edit-attachment-section" class="edit-section" style="display:none;">
+          <div class="edit-section-title">原始账单附件</div>
+          <div class="edit-section-body">
+            <div class="alert-box alert-warning" style="background: #fff7e6; border: 1px solid #ffd591; padding: 10px; border-radius: 4px; margin-bottom: 12px; font-size: 12px; color: #8a5c00;">
+              账单类型费用必须上传物流商原始对账附件，财务审核时将进行双屏对比核查
+            </div>
+            <div class="upload-area" id="edit-upload-area" onclick="document.getElementById('edit-file-input').click()" ondragover="onDragOver(event)" ondrop="onEditDrop(event)">
+              <div style="font-size: 32px; color: #ccc; margin-bottom: 8px;">&#8682;</div>
+              <div class="upload-text">拖拽文件到此处，或 <span style="color:var(--primary);font-weight:600;">点击上传</span></div>
+              <div class="upload-hint">支持 PDF、JPG、PNG 等格式，单次可上传多个文件</div>
+            </div>
+            <input type="file" id="edit-file-input" multiple accept=".pdf,.jpg,.jpeg,.png,.xlsx" style="display:none" onchange="onEditFileSelect(event)">
+            <div class="file-list" id="edit-file-list"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── TOAST ────────────────────────────────────────────────────────────── -->
+<div id="toast-container"></div>
+
+<!-- ─── IMPORT MODAL ─────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="importModal">
+  <div class="modal" style="width:580px;max-height:88vh;">
+    <div class="modal-header">
+      <h3>导入头尾程费用</h3>
+      <button class="modal-close" onclick="closeModal('importModal')">&#10005;</button>
+    </div>
+    <div class="modal-body">
+      <!-- STEPS -->
+      <div class="steps">
+        <div class="step-wrap"><div class="step-node done">1</div><div class="step-label active-lbl">选择类型</div></div>
+        <div class="step-line done"></div>
+        <div class="step-wrap"><div class="step-node active" id="step2Node">2</div><div class="step-label active-lbl" id="step2Lbl">上传数据</div></div>
+        <div class="step-line" id="step2Line"></div>
+        <div class="step-wrap"><div class="step-node todo" id="step3Node">3</div><div class="step-label" id="step3Lbl">完成</div></div>
+      </div>
+
+      <!-- STEP 1: TYPE -->
+      <div class="section-title">第一步：选择费用类型</div>
+      <div style="display:flex;gap:16px;margin-bottom:20px;">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 18px;border:2px solid #d9d9d9;border-radius:6px;flex:1;transition:all 0.2s;" id="lbl-estimate" onclick="selectImportType('estimate')">
+          <input type="radio" name="importType" value="estimate" checked style="accent-color:#1677ff;" />
+          <span>
+            <strong style="display:block;font-size:13px;color:#1a1a2e;">暂估费用</strong>
+            <small style="color:#999;">按标准模板导入预估费用，无需原始凭证</small>
+          </span>
+        </label>
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;padding:10px 18px;border:2px solid #d9d9d9;border-radius:6px;flex:1;transition:all 0.2s;" id="lbl-bill" onclick="selectImportType('bill')">
+          <input type="radio" name="importType" value="bill" style="accent-color:#1677ff;" />
+          <span>
+            <strong style="display:block;font-size:13px;color:#1a1a2e;">实际账单</strong>
+            <small style="color:#999;">导入物流商实际对账单，需附原始账单凭证</small>
+          </span>
+        </label>
+      </div>
+
+      <!-- TEMPLATE DOWNLOAD -->
+      <div class="section-title">第二步：下载并填写模板</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;background:#f8faff;border:1px solid #d0e0ff;border-radius:6px;padding:12px 16px;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:22px;color:#1677ff;">&#128196;</span>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:#1a1a2e;" id="templateName">暂估费用导入模板.xlsx</div>
+            <div style="font-size:11px;color:#999;">请按模板格式填写数据，确保字段完整</div>
+          </div>
+        </div>
+        <button class="btn btn-default btn-sm" onclick="showToast('模板下载成功','success')">&#8595; 下载模板</button>
+      </div>
+
+      <!-- DATA UPLOAD -->
+      <div class="section-title">第三步：上传费用数据文件</div>
+      <div class="upload-zone" id="excelZone" onclick="document.getElementById('excelFile').click()" ondragover="handleDragOver(event,'excelZone')" ondragleave="handleDragLeave('excelZone')" ondrop="handleDrop(event,'excelFile','excelFileList')">
+        <div class="upload-icon">&#128190;</div>
+        <p>将 Excel 文件拖到此处，或 <span>点击上传</span></p>
+        <small>支持 .xlsx / .xls 格式，单次最多 500 条数据</small>
+        <input type="file" id="excelFile" accept=".xlsx,.xls" onchange="handleFileInput(this,'excelFileList')" />
+      </div>
+      <div class="file-list" id="excelFileList"></div>
+
+      <!-- BILL ATTACHMENT (dynamic) -->
+      <div id="billAttachSection" style="display:none;margin-top:18px;">
+        <div class="divider"></div>
+        <div class="notice-bar">
+          <span style="font-size:15px;">&#9888;</span>
+          <span>账单导入强制要求：必须上传物流商原始对账单，供财务审核时与系统数据对比核查</span>
+        </div>
+        <div class="section-title" style="color:#d46b08;border-left-color:#d46b08;">第四步：上传原始账单附件（必填）</div>
+        <div class="upload-zone" id="billZone" onclick="document.getElementById('billFiles').click()" ondragover="handleDragOver(event,'billZone')" ondragleave="handleDragLeave('billZone')" ondrop="handleDrop(event,'billFiles','billFileList')">
+          <div class="upload-icon" style="color:#d46b08;">&#128196;</div>
+          <p>将账单文件拖到此处，或 <span>点击上传</span></p>
+          <small>支持 PDF / JPG / PNG，可上传多个文件，单个不超过 20MB</small>
+          <input type="file" id="billFiles" accept=".pdf,.jpg,.jpeg,.png" multiple onchange="handleFileInput(this,'billFileList')" />
+        </div>
+        <div class="file-list" id="billFileList"></div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('importModal')">取消</button>
+      <button class="btn btn-primary" onclick="submitImport()">确认导入</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── AUDIT MODAL ───────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="auditModal">
+  <div class="modal" style="width:900px;max-height:90vh;">
+    <div class="modal-header">
+      <h3 id="auditModalTitle">审核费用单据</h3>
+      <button class="modal-close" onclick="closeModal('auditModal')">&#10005;</button>
+    </div>
+    <div class="modal-body" id="auditModalBody"></div>
+    <div class="modal-footer" id="auditModalFooter"></div>
+  </div>
+</div>
+
+<!-- ─── CONFIRM MODAL ─────────────────────────────────────────────────────── -->
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal" style="width:360px;">
+    <div class="modal-body" style="padding:28px 24px 20px;">
+      <div class="confirm-icon"><div class="icon-circle">&#10068;</div></div>
+      <div class="confirm-text" id="confirmText">确定要审核吗？</div>
+      <div style="text-align:center;color:#999;font-size:12px;margin-top:8px;" id="confirmSubText"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-default" onclick="closeModal('confirmModal')">关闭</button>
+      <button class="btn btn-primary" id="confirmOkBtn" onclick="">确定</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ─── DATA ──────────────────────────────────────────────────────────────── */
+const feeCategoryOptions = [
+  '头程-运输费',
+  '头程-保险费',
+  '头程-清关费',
+  '头程-税费',
+  '头程-其他',
+  '尾程-配送费',
+  '尾程-杂费',
+  '仓储-仓租费',
+  '仓储-其他费',
+  '资损及赔偿费',
+  '头程-报关费'
+];
+
+const rawData = [
+  { id:1, feeType:'estimate', headTail:'头程', billNo:'TC-202604070002', stockNo:'ASN202604070005', companyEntity:'速通物流（深圳）有限公司', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'done',    attachments:[], currency: 'CNY', fees: [{category: '头程-运输费', name: '基本运费', amount: 1200}], bizPeriod: '2026-04' },
+  { id:2, feeType:'estimate', headTail:'头程', billNo:'TC-202604070001', stockNo:'ASN202604070004', companyEntity:'速通物流（深圳）有限公司', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'done',    attachments:[], currency: 'CNY', fees: [{category: '头程-运输费', name: '基本运费', amount: 1500}], bizPeriod: '2026-04' },
+  { id:3, feeType:'bill',     headTail:'头程', billNo:'TC-202604010008', stockNo:'ASN202604010014', companyEntity:'速通物流（深圳）有限公司', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'pending',  attachments:['顺丰4月对账单_已盖章.pdf','FBA签收确认单.jpg'], currency: 'CNY', fees: [{category: '头程-运输费', name: '基本运费', amount: 3800}, {category: '头程-税费', name: '燃油费', amount: 200}], bizPeriod: '2026-03', estPeriod: '2026-02' },
+  { id:4, feeType:'estimate', headTail:'头程', billNo:'TC-202604010008', stockNo:'ASN202604010013', companyEntity:'速通物流（深圳）有限公司', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'done',    attachments:[], currency: 'CNY', fees: [{category: '头程-运输费', name: '基本运费', amount: 1100}], bizPeriod: '2026-04' },
+  { id:5, feeType:'bill',     headTail:'尾程', billNo:'TC-202604010007', stockNo:'SQ202604010465', companyEntity:'速通物流（深圳）有限公司', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'pending',  attachments:['递四方3月账单.pdf'], currency: 'CNY', fees: [{category: '尾程-配送费', name: '派送费', amount: 4500}], bizPeriod: '2026-03', estPeriod: '2026-02' },
+  { id:6, feeType:'estimate', headTail:'头程', billNo:'TC-202604010006', stockNo:'ASN202604010008', companyEntity:'速通物流（深圳）有限公司', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'pending',  attachments:[], currency: 'CNY', fees: [{category: '头程-运输费', name: '基本运费', amount: 2000}], bizPeriod: '2026-04' },
+  { id:7, feeType:'bill',     headTail:'头程', billNo:'TC-202604010005', stockNo:'ASN202604010007', companyEntity:'速通物流（深圳）有限公司', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'rejected', attachments:['联宇物流账单_v2.pdf','报关费凭证.png','运费发票扫描件.pdf'], currency: 'CNY', fees: [{category: '头程-报关费', name: '基本运费', amount: 5000}], bizPeriod: '2026-03', estPeriod: '2026-02' },
+  { id:8, feeType:'estimate', headTail:'尾程', billNo:'TC-202604010004', stockNo:'SQ202604010328', companyEntity:'速通物流（深圳）有限公司', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'pending',  attachments:[], currency: 'CNY', fees: [{category: '尾程-配送费', name: '派送费', amount: 2100}], bizPeriod: '2026-04' },
+  { id:9, feeType:'estimate', headTail:'头程', billNo:'TC-202604010003', stockNo:'ASN202604010008', companyEntity:'速通物流（深圳）有限公司', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'done',    attachments:[], currency: 'CNY', fees: [{category: '头程-运输费', name: '基本运费', amount: 1800}], bizPeriod: '2026-04' },
+  { id:10,feeType:'estimate', headTail:'头程', billNo:'TC-202604010002', stockNo:'ASN202604010007', companyEntity:'速通物流（深圳）有限公司', supplierCode:'310000', supplierName:'黑龙江天府盛国际物流有限责任...', status:'done',    attachments:[], currency: 'CNY', fees: [{category: '头程-运输费', name: '基本运费', amount: 1600}], bizPeriod: '2026-04' },
+];
+
+let filteredData = [...rawData];
+let currentPage = 1;
+const pageSize = 10;
+let currentImportType = 'estimate';
+const importedExcelFiles = [];
+const importedBillFiles = [];
+
+/* ─── RENDER TABLE ──────────────────────────────────────────────────────── */
+function renderTable() {
+  const start = (currentPage - 1) * pageSize;
+  const pageData = filteredData.slice(start, start + pageSize);
+  const tbody = document.getElementById('tableBody');
+  document.getElementById('totalCount').textContent = filteredData.length;
+
+  tbody.innerHTML = pageData.map(r => {
+    const feeTag = r.feeType === 'estimate'
+      ? '<span class="tag tag-estimate">暂估</span>'
+      : '<span class="tag tag-bill">账单</span>';
+    const htTag = r.headTail === '头程'
+      ? '<span class="tag tag-head">头程</span>'
+      : '<span class="tag tag-tail">尾程</span>';
+    const statusTag = r.status === 'done'
+      ? '<span class="tag tag-status-done">已审核</span>'
+      : r.status === 'pending'
+      ? '<span class="tag tag-status-pending">待审核</span>'
+      : '<span class="tag tag-status-rejected">已驳回</span>';
+
+    const attachCell = (r.feeType === 'bill' && r.attachments && r.attachments.length > 0)
+      ? `<span class="attachment-badge" onclick="previewAttachments(${r.id})">&#128206; ${r.attachments.length}个附件</span>`
+      : '<span style="color:#ccc;font-size:11px;">-</span>';
+
+    let ops = `<div class="td-ops">
+      <button class="btn-link" onclick="viewDetail(${r.id})">详情</button>`;
+    if (r.status === 'pending') {
+      ops += `<button class="btn-link" onclick="openAudit(${r.id})">审核</button>`;
+    }
+    if (r.status !== 'done') {
+      ops += `<button class="btn-link" onclick="editRow(${r.id})">编辑</button>`;
+    }
+    ops += `<button class="btn-link" onclick="viewLog(${r.id})">日志</button></div>`;
+
+    return `<tr>
+      <td>${feeTag}</td>
+      <td>${htTag}</td>
+      <td style="font-family:monospace;font-size:11px;color:#555;">${r.billNo}</td>
+      <td style="font-family:monospace;font-size:11px;color:#555;">${r.stockNo}</td>
+      <td>${r.companyEntity || '速通物流（深圳）有限公司'}</td>
+      <td>${r.supplierCode}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="${r.supplierName}">${r.supplierName}</td>
+      <td>${attachCell}</td>
+      <td>${statusTag}</td>
+      <td>${ops}</td>
+    </tr>`;
+  }).join('');
+
+  renderPagination();
+}
+
+function renderPagination() {
+  const total = filteredData.length;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const container = document.getElementById('pageBtns');
+  let html = `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>&#8249;</button>`;
+  for (let i = 1; i <= totalPages; i++) {
+    if (i === 1 || i === totalPages || Math.abs(i - currentPage) <= 1) {
+      html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+    } else if (Math.abs(i - currentPage) === 2) {
+      html += `<span style="padding:0 4px;color:#999;">...</span>`;
+    }
+  }
+  html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>&#8250;</button>`;
+  container.innerHTML = html;
+}
+
+function goPage(n) {
+  const totalPages = Math.ceil(filteredData.length / pageSize);
+  if (n < 1 || n > totalPages) return;
+  currentPage = n;
+  renderTable();
+}
+function doJump() {
+  const v = parseInt(document.getElementById('jumpInput').value);
+  if (!isNaN(v)) goPage(v);
+}
+
+/* ─── SEARCH ────────────────────────────────────────────────────────────── */
+function doSearch() {
+  const bn = document.getElementById('filterBillNo').value.trim().toLowerCase();
+  const sn = document.getElementById('filterStockNo').value.trim().toLowerCase();
+  const sp = document.getElementById('filterSupplier').value.trim().toLowerCase();
+  const ft = document.getElementById('filterFeeType').value;
+  const st = document.getElementById('filterStatus').value;
+  filteredData = rawData.filter(r => {
+    if (bn && !r.billNo.toLowerCase().includes(bn)) return false;
+    if (sn && !r.stockNo.toLowerCase().includes(sn)) return false;
+    if (sp && !r.supplierName.toLowerCase().includes(sp)) return false;
+    if (ft && r.feeType !== ft) return false;
+    if (st && r.status !== st) return false;
+    return true;
+  });
+  currentPage = 1;
+  renderTable();
+  showToast(`查询完成，共找到 ${filteredData.length} 条记录`, 'success');
+}
+function doReset() {
+  document.getElementById('filterBillNo').value = '';
+  document.getElementById('filterStockNo').value = '';
+  document.getElementById('filterSupplier').value = '';
+  document.getElementById('filterFeeType').value = '';
+  document.getElementById('filterStatus').value = '';
+  filteredData = [...rawData];
+  currentPage = 1;
+  renderTable();
+}
+
+/* ─── MODAL ─────────────────────────────────────────────────────────────── */
+function openModal(id) { document.getElementById(id).classList.add('show'); }
+function closeModal(id) { document.getElementById(id).classList.remove('show'); }
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target === el) el.classList.remove('show'); });
+});
+
+/* ─── IMPORT MODAL ──────────────────────────────────────────────────────── */
+function openImportModal() {
+  importedExcelFiles.length = 0;
+  importedBillFiles.length = 0;
+  document.getElementById('excelFileList').innerHTML = '';
+  document.getElementById('billFileList').innerHTML = '';
+  selectImportType('estimate');
+  openModal('importModal');
+}
+
+function selectImportType(type) {
+  currentImportType = type;
+  const lblE = document.getElementById('lbl-estimate');
+  const lblB = document.getElementById('lbl-bill');
+  const billSection = document.getElementById('billAttachSection');
+  const tplName = document.getElementById('templateName');
+  if (type === 'estimate') {
+    lblE.style.borderColor = '#1677ff'; lblE.style.background = '#f0f7ff';
+    lblB.style.borderColor = '#d9d9d9'; lblB.style.background = '';
+    billSection.style.display = 'none';
+    tplName.textContent = '暂估费用导入模板.xlsx';
+    document.querySelector('input[value="estimate"]').checked = true;
+  } else {
+    lblB.style.borderColor = '#d46b08'; lblB.style.background = '#fff7e6';
+    lblE.style.borderColor = '#d9d9d9'; lblE.style.background = '';
+    billSection.style.display = 'block';
+    tplName.textContent = '账单费用导入模板.xlsx';
+    document.querySelector('input[value="bill"]').checked = true;
+  }
+}
+
+function handleFileInput(input, listId) {
+  const files = Array.from(input.files);
+  const target = listId === 'excelFileList' ? importedExcelFiles : importedBillFiles;
+  files.forEach(f => { if (!target.find(x => x.name === f.name)) target.push(f); });
+  renderFileList(listId, target);
+}
+
+function renderFileList(listId, arr) {
+  const c = document.getElementById(listId);
+  const isPdf = listId === 'billFileList';
+  c.innerHTML = arr.map((f, i) => `
+    <div class="file-item">
+      <div class="file-item-name">
+        <span class="file-icon">${isPdf ? '&#128196;' : '&#128190;'}</span>
+        <span>${f.name}</span>
+        <span style="color:#999;font-size:11px;margin-left:4px;">(${(f.size/1024).toFixed(1)} KB)</span>
+      </div>
+      <span class="file-item-remove" onclick="removeFile('${listId}',${i})">&#10005;</span>
+    </div>`).join('');
+}
+
+function removeFile(listId, idx) {
+  const target = listId === 'excelFileList' ? importedExcelFiles : importedBillFiles;
+  target.splice(idx, 1);
+  renderFileList(listId, target);
+}
+
+function handleDragOver(e, zoneId) { e.preventDefault(); document.getElementById(zoneId).classList.add('dragover'); }
+function handleDragLeave(zoneId) { document.getElementById(zoneId).classList.remove('dragover'); }
+function handleDrop(e, inputId, listId) {
+  e.preventDefault();
+  document.getElementById(e.currentTarget.id).classList.remove('dragover');
+  const dt = e.dataTransfer;
+  const fakeInput = { files: dt.files };
+  handleFileInput(fakeInput, listId);
+}
+
+function submitImport() {
+  if (importedExcelFiles.length === 0) { showToast('请先上传费用数据 Excel 文件', 'error'); return; }
+  if (currentImportType === 'bill' && importedBillFiles.length === 0) {
+    showToast('账单导入必须上传物流商原始对账单附件！', 'error'); return;
+  }
+  closeModal('importModal');
+  const newId = rawData.length + 1;
+  const newRow = {
+    id: newId,
+    feeType: currentImportType,
+    headTail: '头程',
+    billNo: `TC-${Date.now().toString().slice(-10)}`,
+    stockNo: currentImportType === 'bill' ? `ASN${Date.now().toString().slice(-12)}` : `SQ${Date.now().toString().slice(-12)}`,
+    companyEntity: '速通物流（深圳）有限公司', supplierCode: '310000',
+    supplierName: '黑龙江天府盛国际物流有限责任...',
+    status: 'pending',
+    attachments: importedBillFiles.map(f => f.name),
+    currency: 'CNY',
+    fees: [{category: '头程-运输费', name: '导入费用', amount: 0}],
+    bizPeriod: new Date().toISOString().slice(0, 7)
+  };
+  rawData.unshift(newRow);
+  filteredData = [...rawData];
+  renderTable();
+  showToast(`导入成功！新增 1 条${currentImportType === 'bill' ? '账单' : '暂估'}费用记录，状态：待审核`, 'success');
+}
+
+/* ─── AUDIT MODAL ───────────────────────────────────────────────────────── */
+function openAudit(id) {
+  const r = rawData.find(x => x.id === id);
+  if (!r) return;
+  const isBill = r.feeType === 'bill';
+  document.getElementById('auditModalTitle').textContent = `费用审核 - ${r.billNo}`;
+
+  let bodyHtml = `
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+      ${isBill ? '<span class="tag tag-bill" style="font-size:13px;padding:4px 12px;">账单</span>' : '<span class="tag tag-estimate" style="font-size:13px;padding:4px 12px;">暂估</span>'}
+      <span style="font-size:13px;color:#555;">单据号：<strong style="color:#1a1a2e;">${r.billNo}</strong></span>
+      <span style="color:#ddd;">|</span>
+      <span style="font-size:13px;color:#555;">出入库单：<strong>${r.stockNo}</strong></span>
+    </div>`;
+
+  if (isBill) {
+    bodyHtml += `
+    <div class="audit-grid">
+      <div>
+        <div class="audit-panel">
+          <div class="audit-panel-title"><div class="dot"></div>系统解析数据（来自导入 Excel）</div>
+          <div class="detail-row"><span class="detail-label">供应商</span><span class="detail-value">${r.supplierName}</span></div>
+          <div class="detail-row"><span class="detail-label">头尾程类型</span><span class="detail-value">${r.headTail}</span></div>
+          <div class="detail-row"><span class="detail-label">出入库单号</span><span class="detail-value">${r.stockNo}</span></div>
+          <div class="detail-row"><span class="detail-label">供应商编码</span><span class="detail-value">${r.supplierCode}</span></div>
+          <div class="detail-row"><span class="detail-label">费用类型</span><span class="detail-value"><span class="tag tag-bill">账单</span></span></div>
+          <div style="background:#fff8f0;border:1px solid #ffd591;border-radius:6px;padding:14px;margin-top:12px;">
+            <div style="font-size:11px;color:#888;margin-bottom:6px;">账单费用合计</div>
+            <div class="amount-big">${r.currency || 'CNY'} ${calculateTotal(r.fees).toLocaleString('zh-CN', {minimumFractionDigits:2})}</div>
+            <div style="margin-top:10px;">
+              <table style="width:100%;font-size:11px;border-collapse:collapse;">
+                <thead><tr style="background:#f5f7fa;"><th style="padding:5px 8px;text-align:left;color:#888;">费用大类</th><th style="padding:5px 8px;text-align:left;color:#888;">费用项</th><th style="padding:5px 8px;text-align:right;color:#888;">金额</th></tr></thead>
+                <tbody>
+                  ${(r.fees || []).map(f => `
+                    <tr style="border-bottom:1px solid #f0f0f0;">
+                      <td style="padding:5px 8px;">${f.category || '-'}</td>
+                      <td style="padding:5px 8px;">${f.name}</td>
+                      <td style="padding:5px 8px;text-align:right;">${f.amount.toLocaleString('zh-CN', {minimumFractionDigits:2})}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="audit-panel" style="background:#2a2a2a;border-color:#444;padding:0;overflow:hidden;">
+          <div style="background:#1a2340;padding:10px 14px;display:flex;align-items:center;justify-content:space-between;">
+            <span style="color:#afc4ff;font-size:12px;font-weight:600;">原始账单预览（${(r.attachments || []).length} 个文件）</span>
+          </div>
+          <div style="padding:10px;display:flex;flex-direction:column;gap:8px;">
+            ${(r.attachments || []).map((a,i) => `
+              <div class="file-preview-card ${i===0?'active':''}" id="fpc-${id}-${i}" onclick="selectPreview(${id},${i},'${a}')">
+                <div class="fpc-header">
+                  <span style="font-size:14px;color:#ff9999;">&#128196;</span>
+                  <span>${a}</span>
+                </div>
+              </div>`).join('')}
+          </div>
+          <div id="pdfPreviewArea" style="padding:10px;">
+            ${r.attachments && r.attachments.length > 0 ? buildPdfPreview(r.attachments[0], r) : '<div style="color:#fff;padding:20px;text-align:center;">暂无附件预览</div>'}
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="alert alert-warning" style="margin-top:14px;">
+      <span style="font-size:15px;">&#9432;</span>
+      <span>请仔细对比左侧系统解析数据与右侧原始账单内容，确认金额、费用项与供应商信息完全一致后，再点击审核通过。</span>
+    </div>`;
+  } else {
+    bodyHtml += `
+    <div class="audit-panel">
+      <div class="audit-panel-title"><div class="dot"></div>暂估费用明细</div>
+      <div class="detail-row"><span class="detail-label">供应商</span><span class="detail-value">${r.supplierName}</span></div>
+      <div class="detail-row"><span class="detail-label">头尾程类型</span><span class="detail-value">${r.headTail}</span></div>
+      <div class="detail-row"><span class="detail-label">出入库单号</span><span class="detail-value">${r.stockNo}</span></div>
+      <div class="detail-row"><span class="detail-label">费用类型</span><span class="detail-value"><span class="tag tag-estimate">暂估</span></span></div>
+      <div class="detail-row"><span class="detail-label">暂估金额</span><span class="detail-value amount-big">${r.currency || 'CNY'} ${calculateTotal(r.fees).toLocaleString('zh-CN', {minimumFractionDigits:2})}</span></div>
+      <div style="margin-top:12px;">
+        <table style="width:100%;font-size:11px;border-collapse:collapse;border:1px solid #eee;">
+          <thead><tr style="background:#f5f7fa;"><th style="padding:5px 8px;text-align:left;color:#888;border-bottom:1px solid #eee;">费用大类</th><th style="padding:5px 8px;text-align:left;color:#888;border-bottom:1px solid #eee;">费用项</th><th style="padding:5px 8px;text-align:right;color:#888;border-bottom:1px solid #eee;">金额</th></tr></thead>
+          <tbody>
+            ${(r.fees || []).map(f => `
+              <tr style="border-bottom:1px solid #f0f0f0;">
+                <td style="padding:5px 8px;">${f.category || '-'}</td>
+                <td style="padding:5px 8px;">${f.name}</td>
+                <td style="padding:5px 8px;text-align:right;">${f.amount.toLocaleString('zh-CN', {minimumFractionDigits:2})}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="alert alert-info" style="margin-top:14px;">
+      <span style="font-size:15px;">&#9432;</span>
+      <span>暂估费用审核通过后将自动写入费用分摊池，待实际账单到达时进行差额冲销处理。</span>
+    </div>`;
+  }
+
+  // 增加审核说明框
+  bodyHtml += `
+    <div style="margin-top:16px;">
+      <div class="edit-label" style="margin-bottom:8px;font-weight:600;">审核说明</div>
+      <textarea id="auditComment" class="edit-control" style="height:80px;resize:none;padding:10px;" placeholder="请输入审核意见或备注信息（选填）..."></textarea>
+    </div>
+  `;
+
+  document.getElementById('auditModalBody').innerHTML = bodyHtml;
+  document.getElementById('auditModalFooter').innerHTML = `
+    <button class="btn btn-default" onclick="closeModal('auditModal')">关闭</button>
+    <button class="btn btn-danger btn-sm" onclick="doReject(${id})" style="height:32px;padding:0 16px;font-size:13px;">驳回</button>
+    <button class="btn btn-success" style="height:32px;padding:0 18px;font-size:13px;" onclick="confirmAuditPass(${id})">&#10003; 审核通过并入账</button>`;
+  openModal('auditModal');
+}
+
+function calculateTotal(fees) {
+  if (!fees) return 0;
+  return fees.reduce((sum, f) => sum + (parseFloat(f.amount) || 0), 0);
+}
+
+function buildPdfPreview(filename, r) {
+  return `<div class="pdf-page">
+    <div class="pdf-logo">物流供应商对账单</div>
+    <div class="pdf-subtitle">Statement of Account</div>
+    <div class="pdf-meta">
+      <span>账期：${r.bizPeriod || '-'}</span>
+      <span>客户：Kuston 供速通</span>
+      <span>编号：${filename}</span>
+    </div>
+    <table class="pdf-table">
+      <thead><tr><th>费用项</th><th>金额(${r.currency || 'CNY'})</th></tr></thead>
+      <tbody>
+        ${(r.fees || []).map(f => `<tr><td>${f.name}</td><td>${f.amount.toLocaleString('zh-CN', {minimumFractionDigits:2})}</td></tr>`).join('')}
+      </tbody>
+    </table>
+    <div class="pdf-total">合计金额：<strong>${r.currency || 'CNY'} ${calculateTotal(r.fees).toLocaleString('zh-CN', {minimumFractionDigits:2})}</strong></div>
+    <div class="pdf-stamp"><div class="stamp">供应商<br>业务专用章</div></div>
+  </div>`;
+}
+
+function selectPreview(rowId, idx, filename) {
+  const r = rawData.find(x => x.id === rowId);
+  r.attachments.forEach((_, i) => {
+    const el = document.getElementById(`fpc-${rowId}-${i}`);
+    if (el) el.classList.toggle('active', i === idx);
+  });
+  document.getElementById('pdfPreviewArea').innerHTML = buildPdfPreview(filename, r);
+}
+
+function previewAttachments(id) {
+  openAudit(id);
+}
+
+function confirmAuditPass(id) {
+  const comment = document.getElementById('auditComment').value;
+  closeModal('auditModal');
+  document.getElementById('confirmText').textContent = '确定审核通过此单据？';
+  document.getElementById('confirmSubText').textContent = comment ? `审核说明：${comment}` : '审核通过后，费用将自动写入费用分摊池，不可撤销。';
+  document.getElementById('confirmOkBtn').onclick = () => doAuditPass(id, comment);
+  openModal('confirmModal');
+}
+
+function doAuditPass(id, comment) {
+  const r = rawData.find(x => x.id === id);
+  if (r) {
+    r.status = 'done';
+    r.auditComment = comment; // 保存审核意见
+  }
+  filteredData = [...rawData];
+  closeModal('confirmModal');
+  renderTable();
+  showToast('审核通过！该费用已成功写入费用分摊池', 'success');
+}
+
+function doReject(id) {
+  const comment = document.getElementById('auditComment').value;
+  if (!comment) {
+    showToast('驳回单据时必须填写审核说明！', 'error');
+    return;
+  }
+  closeModal('auditModal');
+  const r = rawData.find(x => x.id === id);
+  if (r) {
+    r.status = 'rejected';
+    r.auditComment = comment; // 保存驳回意见
+  }
+  filteredData = [...rawData];
+  renderTable();
+  showToast('已驳回该费用单据', 'warning');
+}
+
+function viewDetail(id) { showToast(`查看单据详情：${rawData.find(x=>x.id===id)?.billNo}`, 'success'); }
+function viewLog(id) { 
+  const r = rawData.find(x=>x.id===id);
+  const logMsg = r.auditComment ? `操作日志：${r.billNo} - 审核意见：${r.auditComment}` : `查看操作日志：${r.billNo}`;
+  showToast(logMsg, 'success'); 
+}
+
+/* ─── TOAST ─────────────────────────────────────────────────────────────── */
+function showToast(msg, type = '') {
+  const c = document.getElementById('toast-container');
+  if (!c) return;
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = msg;
+  c.appendChild(t);
+  setTimeout(() => t.remove(), 2600);
+}
+
+/* ─── MERGED EDIT FUNCTIONS ─── */
+let currentEditId = null;
+let editFiles = [];
+
+function showPage(pageId, headerText) {
+  document.querySelectorAll('.page-view').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + pageId).classList.add('active');
+  document.getElementById('header-current').textContent = headerText;
+}
+
+function goList() {
+  showPage('list', '其他头尾程费用导入');
+  renderTable();
+}
+
+function editRow(id) {
+  currentEditId = id;
+  const row = rawData.find(r => r.id === id);
+  if (!row) return;
+
+  // Fill edit form
+  document.getElementById('edit-no').value = row.billNo;
+  document.getElementById('edit-route').value = row.headTail === '头程' ? 'head' : 'tail';
+  document.getElementById('edit-vendor').value = row.supplierName;
+  document.getElementById('edit-ship-no').value = row.shipNo || '';
+  document.getElementById('edit-asn-no').value = row.stockNo || '';
+  document.getElementById('edit-currency').value = row.currency || 'CNY';
+  document.getElementById('edit-remark').value = row.remark || '';
+  document.getElementById('edit-fee-type').value = row.feeType;
+
+  editFiles = row.attachments ? [...row.attachments] : [];
+
+  renderEditType(row.feeType);
+  renderPeriodFields(row.feeType, row.bizPeriod, row.estPeriod);
+  renderFeeRows(row.fees || []);
+  renderEditFileList();
+
+  document.getElementById('edit-breadcrumb-action').textContent = '编辑费用单';
+  document.getElementById('edit-page-main-title').textContent = '编辑费用单 - ' + row.billNo;
+
+  showPage('edit', '编辑费用单 - ' + row.billNo);
+  document.querySelector('.content-wrap').scrollTop = 0;
+}
+
+function onEditTypeChange() {
+  const type = document.getElementById('edit-fee-type').value;
+  renderEditType(type);
+  const bizPeriod = document.getElementById('edit-biz-period') ? document.getElementById('edit-biz-period').value : '';
+  const estPeriod = document.getElementById('edit-est-period') ? document.getElementById('edit-est-period').value : '';
+  renderPeriodFields(type, bizPeriod, estPeriod);
+}
+
+function renderEditType(type) {
+  const banner = document.getElementById('edit-type-banner');
+  const tag = document.getElementById('edit-type-tag');
+  const bannerTitle = document.getElementById('edit-banner-title');
+  const bannerSub = document.getElementById('edit-banner-sub');
+  const attachSection = document.getElementById('edit-attachment-section');
+
+  if (type === 'estimate') {
+    banner.className = 'type-banner estimate';
+    tag.className = 'tag tag-estimate';
+    tag.textContent = '暂估';
+    bannerTitle.textContent = '暂估费用';
+    bannerSub.textContent = '此单据为暂估类型，暂无需上传原始账单附件，后续可更新为实际账单';
+    attachSection.style.display = 'none';
+  } else {
+    banner.className = 'type-banner bill';
+    tag.className = 'tag tag-bill';
+    tag.textContent = '账单';
+    bannerTitle.textContent = '实际账单费用';
+    bannerSub.textContent = '此单据为账单类型，必须上传物流商原始对账附件，财务审核时将进行双屏核对';
+    attachSection.style.display = 'block';
+  }
+}
+
+function renderPeriodFields(type, bizPeriodVal, estPeriodVal) {
+  const wrap = document.getElementById('edit-period-wrap');
+  if (type === 'estimate') {
+    wrap.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px 20px;grid-column:1/-1;">
+        <div class="edit-form-item">
+          <div class="edit-label">业务账期 <span class="required">*</span></div>
+          <input type="month" class="edit-control" id="edit-biz-period" value="${bizPeriodVal || ''}">
+        </div>
+      </div>
+    `;
+  } else {
+    wrap.innerHTML = `
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px 20px;grid-column:1/-1;">
+        <div class="edit-form-item">
+          <div class="edit-label">业务账期 <span class="required">*</span></div>
+          <input type="month" class="edit-control" id="edit-biz-period" value="${bizPeriodVal || ''}">
+        </div>
+        <div class="edit-form-item">
+          <div class="edit-label">暂估账期</div>
+          <input type="month" class="edit-control" id="edit-est-period" value="${estPeriodVal || ''}" placeholder="对应的暂估账期（如有）">
+        </div>
+      </div>
+    `;
+  }
+}
+
+function renderFeeRows(fees) {
+  const tbody = document.getElementById('fee-detail-body');
+  tbody.innerHTML = '';
+  fees.forEach((f, i) => addFeeRowWithData(i, f));
+  calcFeeTotal();
+}
+
+function addFeeRow() {
+  const tbody = document.getElementById('fee-detail-body');
+  const idx = tbody.rows.length;
+  addFeeRowWithData(idx, { category: '', name: '', amount: '' });
+}
+
+function addFeeRowWithData(idx, f) {
+  const tbody = document.getElementById('fee-detail-body');
+  const tr = document.createElement('tr');
+  
+  // 生成费用大类下拉选项
+  const categoryOptionsHtml = feeCategoryOptions.map(opt => 
+    `<option value="${opt}" ${f.category === opt ? 'selected' : ''}>${opt}</option>`
+  ).join('');
+
+  tr.innerHTML = `
+    <td style="color:var(--gray-4);font-size:12px;">${tbody.rows.length + 1}</td>
+    <td>
+      <select class="inline-input" style="width:140px;">
+        <option value="">请选择</option>
+        ${categoryOptionsHtml}
+      </select>
+    </td>
+    <td><input class="inline-input" placeholder="如：基本运费" value="${f.name || ''}" oninput="calcFeeTotal()"></td>
+    <td><input class="inline-input" type="number" placeholder="0.00" value="${f.amount || ''}" oninput="calcFeeTotal()" style="width:100px;"></td>
+    <td>
+      <button class="btn btn-default btn-sm" style="color:#ff4d4f;border-color:#ff4d4f;" onclick="this.closest('tr').remove();calcFeeTotal();">删除</button>
+    </td>
+  `;
+  tbody.appendChild(tr);
+}
+
+function calcFeeTotal() {
+  const rows = document.querySelectorAll('#fee-detail-body tr');
+  let total = 0;
+  rows.forEach(row => {
+    const amtInput = row.querySelector('input[type="number"]');
+    if (!amtInput) return;
+    const amt = parseFloat(amtInput.value) || 0;
+    total += amt;
+  });
+  const curr = document.getElementById('edit-currency') ? document.getElementById('edit-currency').value : 'CNY';
+  document.getElementById('fee-total-display').textContent = curr + ' ' + total.toLocaleString('zh-CN', {minimumFractionDigits:2});
+}
+
+function onDragOver(e) { e.preventDefault(); document.getElementById('edit-upload-area').classList.add('drag-over'); }
+function onEditDrop(e) {
+  e.preventDefault();
+  document.getElementById('edit-upload-area').classList.remove('drag-over');
+  Array.from(e.dataTransfer.files).forEach(f => editFiles.push(f.name));
+  renderEditFileList();
+}
+function onEditFileSelect(e) {
+  Array.from(e.target.files).forEach(f => editFiles.push(f.name));
+  renderEditFileList();
+  e.target.value = '';
+}
+function renderEditFileList() {
+  const list = document.getElementById('edit-file-list');
+  if (!editFiles.length) { list.innerHTML = ''; return; }
+  list.innerHTML = editFiles.map((f, i) => `
+    <div class="file-item">
+      <div class="file-item-name">
+        <span style="color:#fa8c16;">&#128196;</span>
+        ${f}
+      </div>
+      <div class="file-item-actions">
+        <span class="btn-link" onclick="showToast('预览附件：'+'${f}')">预览</span>
+        <span class="btn-link danger" onclick="editFiles.splice(${i},1);renderEditFileList()">删除</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function submitEdit() {
+  const type = document.getElementById('edit-fee-type').value;
+  if (type === 'bill' && editFiles.length === 0) {
+    showToast('账单类型必须上传至少一个原始对账附件', 'error');
+    return;
+  }
+  
+  document.getElementById('confirmText').textContent = '确认保存修改？';
+  document.getElementById('confirmSubText').textContent = '费用单的信息将被更新，确认提交？';
+  document.getElementById('confirmOkBtn').onclick = () => {
+    const row = rawData.find(r => r.id === currentEditId);
+    if (row) {
+      row.feeType = document.getElementById('edit-fee-type').value;
+      row.headTail = document.getElementById('edit-route').value === 'head' ? '头程' : '尾程';
+      row.supplierName = document.getElementById('edit-vendor').value;
+      row.shipNo = document.getElementById('edit-ship-no').value;
+      row.stockNo = document.getElementById('edit-asn-no').value;
+      row.currency = document.getElementById('edit-currency').value;
+      row.remark = document.getElementById('edit-remark').value;
+      row.attachments = [...editFiles];
+      if (row.status === 'rejected') row.status = 'pending';
+      row.bizPeriod = document.getElementById('edit-biz-period').value;
+      if (document.getElementById('edit-est-period')) row.estPeriod = document.getElementById('edit-est-period').value;
+      
+      // Update fees
+      const feeRows = document.querySelectorAll('#fee-detail-body tr');
+      row.fees = Array.from(feeRows).map(tr => {
+        const categorySelect = tr.querySelector('select:first-of-type');
+        const nameInput = tr.querySelector('input[placeholder="如：基本运费"]');
+        const amtInput = tr.querySelector('input[type="number"]');
+        
+        return {
+          category: categorySelect ? categorySelect.value : '',
+          name: nameInput ? nameInput.value : '',
+          amount: amtInput ? parseFloat(amtInput.value) || 0 : 0
+        };
+      });
+    }
+    closeModal('confirmModal');
+    showToast('费用单已成功保存', 'success');
+    setTimeout(() => goList(), 800);
+  };
+  openModal('confirmModal');
+}
+
+/* ─── INIT ──────────────────────────────────────────────────────────────── */
+renderTable();
+selectImportType('estimate');
+</script>
+</body>
+</html>
